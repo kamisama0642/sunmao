@@ -53,7 +53,7 @@ public class ClickToPlayAnimation : MonoBehaviour
             _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
 
         // 读取存档，初始化零件外观
-        bool finish = GameGlobalData.instance.IsPartFinished(partKey);
+        bool finish = GameGlobalData.Instance.IsPartFinished(partKey);
         if (finish)
         {
             _spriteRenderer.sprite = assembledSprite;
@@ -232,9 +232,9 @@ public class ClickToPlayAnimation : MonoBehaviour
         // 仅首次组装执行新增物品逻辑
         if (!_isAssembled)
         {
-            if (!GameGlobalData.instance.IsPartFinished(partKey))
+            if (!GameGlobalData.Instance.IsPartFinished(partKey))
             {
-                GameGlobalData.instance.SetPartFinished(partKey);
+                GameGlobalData.Instance.SetPartFinished(partKey);
 
                 Debug.Log($"[{gameObject.name}] 组装完成，准备添加物品至背包");
                 // 逐层空值校验，打印定位问题
@@ -242,14 +242,14 @@ public class ClickToPlayAnimation : MonoBehaviour
                 {
                     Debug.LogError($"{gameObject.name} 未拖拽赋值 ItemData");
                 }
-                else if (BagShowVideoManager.instance == null)
+                else if (BagShowVideoManager.Instance == null)
                 {
                     Debug.LogError("BagShowVideoManager单例为空，无法存入物品");
                 }
                 else
                 {
                     // 传递完整ItemData给背包管理器
-                    BagShowVideoManager.instance.AddItemToBag(itemData);
+                    BagShowVideoManager.Instance.AddItemToBag(itemData);
                     Debug.Log($"成功传递物品：{itemData.itemTitle}");
                 }
             }
@@ -261,9 +261,9 @@ public class ClickToPlayAnimation : MonoBehaviour
             transform.localScale = assembledScale;
 
             // 弹出操作提示
-            if (HintManager.instance != null)
+            if (HintManager.Instance != null)
             {
-                HintManager.instance.ShowHint("已解锁物品，按Tab打开背包查看");
+                HintManager.Instance.ShowHint("已解锁物品，按Tab打开背包查看");
             }
         }
         InteractExclamationTip tipComp = GetComponent<InteractExclamationTip>();

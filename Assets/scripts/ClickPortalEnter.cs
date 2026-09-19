@@ -1,10 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// 点击传送门切换场景
+/// 玩家判断基于 PlayerManager.OnlyPlayer 引用（含子物体），不再使用物体名字符串比对
+/// </summary>
 public class ClickPortalEnter : MonoBehaviour
 {
-    [Header("玩家物体名称")]
-    public string playerObjName = "player";
     [Header("目标场景名称")]
     public string targetSceneName = "workroom";
     [Header("本门专属出生坐标")]
@@ -12,7 +14,6 @@ public class ClickPortalEnter : MonoBehaviour
 
     private Collider2D portalCol;
     private bool isLoadingScene = false;
-    private static GameObject globalPlayer;
 
     void Start()
     {
@@ -21,28 +22,25 @@ public class ClickPortalEnter : MonoBehaviour
         {
             Debug.LogError($"传送门 {gameObject.name} 缺少Collider2D触发器！");
             enabled = false;
-            return;
-        }
-        // 仅第一次初始化全局玩家
-        if (globalPlayer == null)
-        {
-            globalPlayer = GameObject.Find(playerObjName);
-            if (globalPlayer != null)
-                DontDestroyOnLoad(globalPlayer);
         }
     }
 
     void OnMouseDown()
     {
-        if (portalCol == null || isLoadingScene || globalPlayer == null) return;
+        if (portalCol == null || isLoadingScene) return;
 
-        // 判断玩家是否站在门内（原版名称匹配逻辑）
+        // 玩家由 PlayerManager 统一管理；无玩家时（如单独运行本场景）直接不响应
+        PlayerManager pm = PlayerManager.Instance;
+        GameObject player = pm != null ? PlayerManager.OnlyPlayer : null;
+        if (player == null) return;
+
+        // 判断玩家（或其子物体上的碰撞体）是否站在门内
         Collider2D[] hits = new Collider2D[20];
         int hitCount = Physics2D.OverlapCollider(portalCol, new ContactFilter2D(), hits);
         bool playerInside = false;
         for (int i = 0; i < hitCount; i++)
         {
-            if (hits[i].gameObject.name == playerObjName)
+            if (hits[i] != null && hits[i].transform.IsChildOf(player.transform))
             {
                 playerInside = true;
                 break;
@@ -52,22 +50,21 @@ public class ClickPortalEnter : MonoBehaviour
 
         isLoadingScene = true;
         // 传送前把玩家移出屏幕，消除残影
-        globalPlayer.transform.position = new Vector2(-9999, -9999);
-        // 直接加载
+        player.transform.position = new Vector2(-9999, -9999);
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Single);
 
         loadOp.completed += (op) =>
         {
-            // 加载完成销毁所有分身
+            // 加载完成销毁所有分身（目标场景若内置同 prefab 实例，则保留持久化的原玩家）
             GameObject[] allPlayers = Object.FindObjectsOfType<GameObject>(true);
             foreach (GameObject obj in allPlayers)
             {
-                if (obj.name == playerObjName && obj != globalPlayer)
+                if (obj.name == player.name && obj != player)
                 {
                     Destroy(obj);
                 }
             }
-            globalPlayer.transform.position = playerSpawnPos;
+            player.transform.position = playerSpawnPos;
             isLoadingScene = false;
         };
     }

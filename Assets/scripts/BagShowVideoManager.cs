@@ -33,21 +33,18 @@ public class BagShowVideoManager : MonoBehaviour
     private List<ItemData> ownedItemCache = new List<ItemData>();
 
     // 全局单例
-    public static BagShowVideoManager instance;
+    public static BagShowVideoManager Instance;
 
     private void Awake()
     {
-        Debug.Log($"【背包Awake】挂载物体：{gameObject.name}");
         // 单例去重
-        if (instance == null)
+        if (Instance == null)
         {
-            instance = this;
-            Debug.Log("背包单例初始化成功");
+            Instance = this;
         }
         else
         {
             Destroy(gameObject);
-            Debug.Log("重复背包管理器，已销毁");
             return;
         }
 
