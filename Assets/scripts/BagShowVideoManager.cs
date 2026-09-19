@@ -179,6 +179,27 @@ public class BagShowVideoManager : MonoBehaviour
     }
 
     /// <summary>
+    /// 清空背包缓存与全部格子显示，用于游戏重置
+    /// </summary>
+    public void ClearBag()
+    {
+        ownedItemCache.Clear();
+        currentItemCount = 0;
+        if (bagItemSlots != null)
+        {
+            for (int i = 0; i < bagItemSlots.Length; i++)
+            {
+                if (bagItemSlots[i] != null)
+                {
+                    bagItemSlots[i].sprite = null;
+                    bagItemSlots[i].enabled = false;
+                }
+            }
+        }
+        CloseItemPreview();
+    }
+
+    /// <summary>
     /// 点击格子，加载物品标题/描述/预览视频
     /// </summary>
     public void OnClickBagSlot(int index)
