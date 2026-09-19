@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq.Expressions;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-public class sign : MonoBehaviour
+public class Sign : MonoBehaviour
 {
     public GameObject dialogBox;
     public TextMeshProUGUI dialogBoxText;
