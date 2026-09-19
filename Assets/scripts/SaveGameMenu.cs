@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 /// <summary>
 /// 存档菜单（雏形）：挂在场景空物体上
 /// Esc 打开/关闭菜单窗口，显示当前进度，提供"重新开始"（清空进度+删除存档+回到起始场景）
-/// 界面暂用IMGUI实现，无需场景UI配置；后续可替换为uGUI正式面板
+/// 界面暂用IMGUI实现，窗口尺寸与字号随分辨率缩放；后续可替换为uGUI正式面板
 /// </summary>
 public class SaveGameMenu : MonoBehaviour
 {
@@ -13,6 +13,12 @@ public class SaveGameMenu : MonoBehaviour
 
     private bool _menuOpen = false;
     private Rect _windowRect;
+    // 缓存样式，避免OnGUI每帧新建
+    private GUIStyle _windowStyle;
+    private GUIStyle _infoLabel;
+    private GUIStyle _tipLabel;
+    private GUIStyle _bigButton;
+    private int _builtAtScale = -1;
 
     private void Update()
     {
@@ -31,10 +37,19 @@ public class SaveGameMenu : MonoBehaviour
             CloseMenu();
     }
 
+    /// <summary>以1080p为基准的界面缩放倍数，高分屏自动放大</summary>
+    private float UiScale
+    {
+        get { return Mathf.Clamp(Screen.height / 1080f, 1f, 3f); }
+    }
+
     private void OpenMenu()
     {
         _menuOpen = true;
-        _windowRect = new Rect(Screen.width / 2f - 160f, Screen.height / 2f - 110f, 320f, 220f);
+        float scale = UiScale;
+        float width = 480f * scale;
+        float height = 340f * scale;
+        _windowRect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
     }
 
     private void CloseMenu()
@@ -46,30 +61,62 @@ public class SaveGameMenu : MonoBehaviour
     {
         if (!_menuOpen)
             return;
-        _windowRect = GUILayout.Window(0, _windowRect, DrawWindow, "存档");
+        EnsureStyles();
+        _windowRect = GUILayout.Window(0, _windowRect, DrawWindow, "存档", _windowStyle);
+    }
+
+    /// <summary>
+    /// 按当前缩放倍数构建样式；分辨率变化时自动重建
+    /// </summary>
+    private void EnsureStyles()
+    {
+        int scale = Mathf.RoundToInt(UiScale);
+        if (_windowStyle != null && scale == _builtAtScale)
+            return;
+        _builtAtScale = scale;
+
+        _windowStyle = new GUIStyle(GUI.skin.window)
+        {
+            fontSize = Mathf.RoundToInt(18 * scale)
+        };
+        _infoLabel = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = Mathf.RoundToInt(20 * scale)
+        };
+        _tipLabel = new GUIStyle(GUI.skin.label)
+        {
+            fontSize = Mathf.RoundToInt(14 * scale)
+        };
+        _bigButton = new GUIStyle(GUI.skin.button)
+        {
+            fontSize = Mathf.RoundToInt(18 * scale)
+        };
     }
 
     private void DrawWindow(int id)
     {
+        float scale = UiScale;
         GameGlobalData data = GameGlobalData.Instance;
         GlobalInteractRecord record = GlobalInteractRecord.Instance;
 
-        GUILayout.Space(6);
-        GUILayout.Label($"已组装零件：{data.finishedPartDict.Count}");
-        GUILayout.Label($"已交互物品：{record.interactedIdList.Count}");
-        GUILayout.Label("进度在每次关键操作后自动保存");
-        GUILayout.Space(10);
+        GUILayout.Space(10 * scale);
+        GUILayout.Label($"已组装零件：{data.finishedPartDict.Count}", _infoLabel);
+        GUILayout.Label($"已交互物品：{record.interactedIdList.Count}", _infoLabel);
+        GUILayout.Space(4 * scale);
+        GUILayout.Label("进度在每次关键操作后自动保存", _tipLabel);
+        GUILayout.Space(14 * scale);
 
-        if (GUILayout.Button("重新开始（清空进度并回到游戏开头）", GUILayout.Height(32)))
+        if (GUILayout.Button("重新开始（清空进度并回到游戏开头）", _bigButton, GUILayout.Height(48 * scale)))
         {
             RestartGame();
             return;
         }
-        if (GUILayout.Button("继续游戏", GUILayout.Height(28)))
+        GUILayout.Space(8 * scale);
+        if (GUILayout.Button("继续游戏", _bigButton, GUILayout.Height(40 * scale)))
             CloseMenu();
 
         // 标题栏可拖动
-        GUI.DragWindow(new Rect(0, 0, 10000f, 20f));
+        GUI.DragWindow(new Rect(0, 0, 10000f, 30f * scale));
     }
 
     /// <summary>
