@@ -47,7 +47,13 @@ public class GlobalInteractRecord : MonoBehaviour
         // 设置跨场景不销毁
         DontDestroyOnLoad(gameObject);
 
-        // 将序列化列表加载进查询集合
+        // 从磁盘读档恢复已交互列表，再构建运行时查询集合
+        GameSaveData data = SaveSystem.Load();
+        if (data != null)
+        {
+            interactedIdList.Clear();
+            interactedIdList.AddRange(data.interactedIds);
+        }
         _interactedSet.Clear();
         foreach (string id in interactedIdList)
         {
@@ -65,6 +71,9 @@ public class GlobalInteractRecord : MonoBehaviour
             return;
         _interactedSet.Add(uniqueId);
         interactedIdList.Add(uniqueId);
+
+        // 状态变更立即落盘
+        SaveSystem.Save();
     }
 
     /// <summary>

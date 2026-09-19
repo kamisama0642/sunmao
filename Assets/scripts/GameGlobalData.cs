@@ -35,7 +35,7 @@ public class GameGlobalData : MonoBehaviour
     public Dictionary<string, bool> finishedPartDict = new Dictionary<string, bool>();
 
     /// <summary>
-    /// 单例去重，跨场景不销毁
+    /// 单例去重，跨场景不销毁；启动时从磁盘读档
     /// </summary>
     private void Awake()
     {
@@ -46,6 +46,20 @@ public class GameGlobalData : MonoBehaviour
         }
         _instance = this;
         DontDestroyOnLoad(gameObject);
+        LoadProgress();
+    }
+
+    /// <summary>
+    /// 从磁盘读档，恢复零件组装进度
+    /// </summary>
+    private void LoadProgress()
+    {
+        GameSaveData data = SaveSystem.Load();
+        if (data == null)
+            return;
+        finishedPartDict.Clear();
+        foreach (string partKey in data.finishedParts)
+            finishedPartDict[partKey] = true;
     }
 
     /// <summary>
@@ -65,6 +79,9 @@ public class GameGlobalData : MonoBehaviour
             finishedPartDict[partKey] = true;
         else
             finishedPartDict.Add(partKey, true);
+
+        // 进度变更立即落盘
+        SaveSystem.Save();
     }
 
     /// <summary>
@@ -87,10 +104,11 @@ public class GameGlobalData : MonoBehaviour
     }
 
     /// <summary>
-    /// 清空全部零件进度，用于游戏重置功能
+    /// 清空全部零件进度并删除存档，用于游戏重置功能
     /// </summary>
     public void ClearAllProgress()
     {
         finishedPartDict.Clear();
+        SaveSystem.DeleteSave();
     }
 }
