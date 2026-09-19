@@ -85,4 +85,13 @@ public class GlobalInteractRecord : MonoBehaviour
     {
         return _interactedSet.Contains(uniqueId);
     }
+
+    /// <summary>
+    /// 清空全部交互标记，用于游戏重置（不触发存档写入）
+    /// </summary>
+    public void ResetAll()
+    {
+        _interactedSet.Clear();
+        interactedIdList.Clear();
+    }
 }
