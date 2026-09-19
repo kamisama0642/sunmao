@@ -8,15 +8,17 @@ public class HintManager : MonoBehaviour
     public float showDuration = 5f; // 提示显示时长
     private Coroutine hideCoroutine;
 
-    // 单例模式
-    public static HintManager instance;
+    // 单例模式（UI引用在场景中绑定，不做自动创建；调用方需判空）
+    public static HintManager Instance { get; private set; }
 
     private void Awake()
     {
-        if (instance == null)
-            instance = this;
-        else
+        if (Instance != null && Instance != this)
+        {
             Destroy(gameObject);
+            return;
+        }
+        Instance = this;
 
         // 初始隐藏提示
         hintText?.gameObject.SetActive(false);
@@ -60,6 +62,4 @@ public class HintManager : MonoBehaviour
             hideCoroutine = null;
         }
     }
-
-    // 移除Tab键关闭提示的Update逻辑
 }

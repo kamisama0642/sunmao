@@ -2,13 +2,31 @@ using UnityEngine;
 using System.Collections.Generic;
 
 /// <summary>
-/// 全局游戏进度持久存档管理器
+/// 全局游戏进度管理器
 /// 存储所有零件组装完成状态，切换场景数据不重置
+/// 访问入口为静态属性 Instance：场景中已放置则复用，缺失时自动创建，任何场景单独运行均可安全访问
 /// </summary>
 public class GameGlobalData : MonoBehaviour
 {
-    /// <summary>全局进度单例实例</summary>
-    public static GameGlobalData instance;
+    private static GameGlobalData _instance;
+
+    /// <summary>全局进度单例访问入口（懒加载自举）</summary>
+    public static GameGlobalData Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<GameGlobalData>();
+                if (_instance == null)
+                {
+                    GameObject go = new GameObject("GameGlobalData");
+                    _instance = go.AddComponent<GameGlobalData>();
+                }
+            }
+            return _instance;
+        }
+    }
 
     /// <summary>
     /// 零件组装状态字典
@@ -17,16 +35,16 @@ public class GameGlobalData : MonoBehaviour
     public Dictionary<string, bool> finishedPartDict = new Dictionary<string, bool>();
 
     /// <summary>
-    /// 单例初始化，跨场景不销毁，重复实例销毁
+    /// 单例去重，跨场景不销毁
     /// </summary>
     private void Awake()
     {
-        if (instance != null && instance != this)
+        if (_instance != null && _instance != this)
         {
             Destroy(gameObject);
             return;
         }
-        instance = this;
+        _instance = this;
         DontDestroyOnLoad(gameObject);
     }
 

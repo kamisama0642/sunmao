@@ -28,28 +28,15 @@ public class InteractExclamationTip : MonoBehaviour
     /// 感叹号基础本地坐标
     /// </summary>
     private Vector3 _baseLocalPos;
-    /// <summary>
-    /// 是否已经执行过状态刷新，仅执行一次
-    /// </summary>
-    private bool _hasRefreshed = false;
+
+    private void Start()
+    {
+        // Instance 为懒加载自举，任何场景单独运行都可安全获取
+        RefreshTipDisplay(GlobalInteractRecord.Instance);
+    }
 
     private void Update()
     {
-        // 首次查找全局实例并刷新状态
-        if (!_hasRefreshed)
-        {
-            GlobalInteractRecord record = GlobalInteractRecord.GetSafeInstance();
-            if (record != null)
-            {
-                RefreshTipDisplay(record);
-                _hasRefreshed = true;
-            }
-            else
-            {
-                Debug.LogWarning($"【感叹号】{gameObject.name} 找不到GlobalInteractRecord实例", this);
-            }
-        }
-
         // 浮动动画
         if (_runtimeTip != null && _runtimeTip.activeSelf)
         {
@@ -64,13 +51,11 @@ public class InteractExclamationTip : MonoBehaviour
     void RefreshTipDisplay(GlobalInteractRecord record)
     {
         bool isInteracted = record.IsInteracted(itemUniqueId);
-        Debug.Log($"【感叹号调试】物体:{gameObject.name} ID:{itemUniqueId} 是否交互:{isInteracted}");
 
         if (!isInteracted)
         {
             if (_runtimeTip == null && exclamationPrefab != null)
             {
-                Debug.Log($"【感叹号调试】生成感叹号：{gameObject.name}");
                 _runtimeTip = Instantiate(exclamationPrefab);
                 // false：不继承父物体缩放旋转
                 _runtimeTip.transform.SetParent(transform, false);
@@ -80,7 +65,9 @@ public class InteractExclamationTip : MonoBehaviour
                 // 应用当前物体独立缩放设置
                 _runtimeTip.transform.localScale = Vector3.one * tipScale;
                 // 强制提高渲染层级，避免被瓦片/家具遮挡
-                _runtimeTip.GetComponent<SpriteRenderer>().sortingOrder = 10;
+                SpriteRenderer tipRenderer = _runtimeTip.GetComponent<SpriteRenderer>();
+                if (tipRenderer != null)
+                    tipRenderer.sortingOrder = 10;
             }
         }
         else
@@ -95,18 +82,11 @@ public class InteractExclamationTip : MonoBehaviour
 
     /// <summary>
     /// 外部调用接口：物品交互完成，永久标记并移除感叹号
-    /// 在你的物品交互成功逻辑末尾调用
+    /// 在物品交互成功逻辑末尾调用
     /// </summary>
     public void CompleteInteract()
     {
-        GlobalInteractRecord record = GlobalInteractRecord.GetSafeInstance();
-        if (record == null)
-        {
-            Debug.LogWarning($"【感叹号】交互调用失败，找不到管理器 {gameObject.name}", this);
-            return;
-        }
-
-        record.MarkInteracted(itemUniqueId);
+        GlobalInteractRecord.Instance.MarkInteracted(itemUniqueId);
         if (_runtimeTip != null)
         {
             Destroy(_runtimeTip);

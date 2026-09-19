@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMove : MonoBehaviour
 {
     [Header("移动配置")]
@@ -21,11 +22,10 @@ public class PlayerMove : MonoBehaviour
 
     private void Start()
     {
-        //防止场景切换摧毁角色
-        DontDestroyOnLoad(gameObject);
-        // 自动获取组件
-        rb = GetComponent<Rigidbody2D>() ?? gameObject.AddComponent<Rigidbody2D>();
-        anim = GetComponentInChildren<Animator>() ?? GetComponent<Animator>();
+        // 玩家的跨场景保留由 PlayerManager 统一负责，此处不再调用 DontDestroyOnLoad
+        // 组件由 prefab 保证存在（见 RequireComponent），仅做获取
+        rb = GetComponent<Rigidbody2D>();
+        anim = GetComponentInChildren<Animator>();
 
         // 刚体基础设置
         rb.gravityScale = 0; // 2D顶视角
