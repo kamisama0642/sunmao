@@ -1,0 +1,43 @@
+# 默认文本自动处理
+* text=auto
+
+# Unity 序列化文件：统一行尾并启用 YAML 三路合并
+*.meta    text merge=unityyamlmerge eol=lf
+*.unity   merge=unityyamlmerge
+*.prefab  merge=unityyamlmerge
+*.asset   merge=unityyamlmerge
+*.mat     merge=unityyamlmerge
+*.anim    merge=unityyamlmerge
+*.controller merge=unityyamlmerge
+*.playable merge=unityyamlmerge
+*.mask    merge=unityyamlmerge
+*.spriteatlas merge=unityyamlmerge
+*.preset  merge=unityyamlmerge
+
+# C# 脚本在 Windows 上使用 CRLF
+*.cs      text eol=crlf
+
+# 二进制资源不做行尾转换
+*.dll     binary
+*.pdb     binary
+*.png     binary
+*.jpg     binary
+*.jpeg    binary
+*.tga     binary
+*.psd     binary
+*.tif     binary
+*.tiff    binary
+*.bmp     binary
+*.fbx     binary
+*.fbm     binary
+*.obj     binary
+*.blend   binary
+*.wav     binary
+*.mp3     binary
+*.ogg     binary
+*.aif     binary
+*.aiff    binary
+*.mp4     binary
+*.avi     binary
+*.mov     binary
+*.rendertexture binary

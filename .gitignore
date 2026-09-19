@@ -1,0 +1,74 @@
+# ==============================
+# Unity 官方 .gitignore 模板
+# ==============================
+
+# Unity 生成的可重建目录
+/[Ll]ibrary/
+/[Tt]emp/
+/[Oo]bj/
+/[Bb]uild/
+/[Bb]uilds/
+/[Ll]ogs/
+/[Uu]serSettings/
+/[Mm]emoryCaptures/
+/[Rr]ecordings/
+
+# Visual Studio / Rider / JetBrains 生成文件
+.vs/
+.idea/
+.vsconfig
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.VC.VC.opendb
+*.metaproj
+*.usertasks
+*.booproj
+*.sln.docstates
+
+# Build 结果
+[Bb]uild/
+[Bb]uilds/
+[Bb]uild[Ll]ogs/
+[Bb]uild[D]ata/
+*.apk
+*.aab
+*.unitypackage
+*.app
+*.exe
+
+# Crash 记录
+sysinfo.txt
+
+# 压缩包
+*.gz
+*.rar
+*.zip
+*.7z
+
+# 操作系统
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# 保留：Assets 下的 .meta 文件必须提交（Unity 依赖 GUID 关联资源）
+# 不要写: *.meta
+
+# 超出 GitHub 100MB 限制的大文件（本地保留）
+Assets/TextMesh Pro/Fonts/youmo SDF.asset

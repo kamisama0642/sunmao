@@ -1,0 +1,289 @@
+using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.Video;
+using TMPro;
+
+/// <summary>
+/// 可交互组装零件点击脚本
+/// 挂载：每个场景可点击零件物体
+/// 功能：点击弹窗、播放组装视频、组装完成存档并添加物品进背包
+/// 依赖：GlobalUIRef、GameGlobalData、BagShowVideoManager、HintManager
+/// </summary>
+public class ClickToPlayAnimation : MonoBehaviour
+{
+    [Header("物品绑定")]
+    [Tooltip("组装完成后获得的物品ScriptableObject")]
+    public ItemData itemData;
+    [Tooltip("零件唯一标识，用于存档判断是否已组装")]
+    public string partKey;
+    [Tooltip("组装动画视频资源")]
+    public VideoClip videoClip;
+    [Tooltip("视频循环播放次数，默认1次")]
+    public int playTimes = 1;
+
+    [Header("零件外观素材")]
+    public Sprite originalSprite;
+    public Sprite assembledSprite;
+    public Vector3 originalScale = Vector3.one;
+    public Vector3 assembledPos;
+    public Vector3 assembledScale = new Vector3(0.8f, 0.8f, 1);
+
+    [Header("弹窗提示文字")]
+    public string firstClickTip = "要把这堆木料加工完成吗？(Q确认/E取消)";
+    public string secondClickTip = "再次观看组装动画？(Q确认/E取消)";
+
+    // 全局UI缓存
+    private GameObject dialogBox;
+    private TMP_Text dialogTipText;
+    private GameObject videoPanel;
+    private RawImage videoRawImage;
+
+    private SpriteRenderer _spriteRenderer;
+    private bool _isAssembled = false;
+    private bool _isDialogShowing = false;
+    private int _currentPlayCount = 0;
+    private RenderTexture _renderTexture;
+    private VideoPlayer _assembleVideoPlayer;
+
+    void Start()
+    {
+        // 获取精灵渲染组件，无则自动创建
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        if (_spriteRenderer == null)
+            _spriteRenderer = gameObject.AddComponent<SpriteRenderer>();
+
+        // 读取存档，初始化零件外观
+        bool finish = GameGlobalData.instance.IsPartFinished(partKey);
+        if (finish)
+        {
+            _spriteRenderer.sprite = assembledSprite;
+            transform.position = assembledPos;
+            transform.localScale = assembledScale;
+            _isAssembled = true;
+        }
+        else
+        {
+            _spriteRenderer.sprite = originalSprite;
+            transform.localScale = originalScale;
+        }
+
+        // 自动添加2D点击碰撞体
+        if (GetComponent<BoxCollider2D>() == null)
+            gameObject.AddComponent<BoxCollider2D>().isTrigger = false;
+
+        // 创建内置视频播放器
+        _assembleVideoPlayer = gameObject.AddComponent<VideoPlayer>();
+        _assembleVideoPlayer.playOnAwake = false;
+        _assembleVideoPlayer.renderMode = VideoRenderMode.RenderTexture;
+
+        // 拉取全局UI单例
+        if (GlobalUIRef.Instance == null)
+        {
+            Debug.LogError($"{gameObject.name}：全局UI单例未初始化！");
+            enabled = false;
+            return;
+        }
+        dialogBox = GlobalUIRef.Instance.dialogBox;
+        dialogTipText = GlobalUIRef.Instance.dialogTipText;
+        videoPanel = GlobalUIRef.Instance.videoPanel;
+        videoRawImage = GlobalUIRef.Instance.videoRawImage;
+    }
+
+    void Update()
+    {
+        // 鼠标点击检测，弹窗/视频打开时屏蔽点击
+        if (Input.GetMouseButtonDown(0) && !_isDialogShowing && !videoPanel.activeSelf)
+        {
+            RayCastClick();
+        }
+
+        // 弹窗快捷键
+        if (_isDialogShowing)
+        {
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                CloseDialog();
+                PlayVideoAnim();
+            }
+            if (Input.GetKeyDown(KeyCode.E))
+                CloseDialog();
+        }
+
+        // 视频面板关闭快捷键
+        if (videoPanel.activeSelf && Input.GetKeyDown(KeyCode.E))
+        {
+            CloseVideo();
+        }
+    }
+
+    /// <summary>
+    /// 2D射线检测是否点击当前零件
+    /// </summary>
+    void RayCastClick()
+    {
+        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Vector2 mousePos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
+        RaycastHit2D hitInfo = Physics2D.Raycast(mousePos2D, Vector2.zero);
+
+        if (hitInfo && hitInfo.collider.gameObject == gameObject)
+        {
+            OpenDialog();
+        }
+    }
+
+    /// <summary>
+    /// 打开确认弹窗
+    /// </summary>
+    void OpenDialog()
+    {
+        if (dialogBox == null || dialogTipText == null)
+        {
+            Debug.LogError($"{gameObject.name}：弹窗UI缺失，请检查GlobalUIRef绑定");
+            return;
+        }
+        _isDialogShowing = true;
+        dialogBox.SetActive(true);
+        Canvas.ForceUpdateCanvases();
+        dialogTipText.text = _isAssembled ? secondClickTip : firstClickTip;
+    }
+
+    /// <summary>
+    /// 关闭确认弹窗
+    /// </summary>
+    void CloseDialog()
+    {
+        if (dialogBox == null) return;
+        _isDialogShowing = false;
+        dialogBox.SetActive(false);
+    }
+
+    /// <summary>
+    /// 播放组装视频
+    /// </summary>
+    void PlayVideoAnim()
+    {
+        if (videoPanel == null || videoRawImage == null)
+        {
+            Debug.LogError($"{gameObject.name}：视频面板UI缺失");
+            return;
+        }
+        if (videoClip == null)
+        {
+            Debug.LogError($"{gameObject.name}：未赋值组装视频");
+            return;
+        }
+
+        _currentPlayCount = 0;
+        videoPanel.SetActive(true);
+        Canvas.ForceUpdateCanvases();
+
+        // 自动重建适配尺寸渲染纹理
+        if (_renderTexture == null || _renderTexture.width != videoClip.width || _renderTexture.height != videoClip.height)
+        {
+            if (_renderTexture != null)
+            {
+                _renderTexture.Release();
+                Destroy(_renderTexture);
+            }
+            _renderTexture = new RenderTexture((int)videoClip.width, (int)videoClip.height, 0);
+            _renderTexture.Create();
+        }
+
+        videoRawImage.texture = _renderTexture;
+        _assembleVideoPlayer.targetTexture = _renderTexture;
+        _assembleVideoPlayer.clip = videoClip;
+        _assembleVideoPlayer.isLooping = false;
+        // 防止多次绑定回调
+        _assembleVideoPlayer.loopPointReached -= OnVideoEnd;
+        _assembleVideoPlayer.loopPointReached += OnVideoEnd;
+        _assembleVideoPlayer.Play();
+    }
+
+    /// <summary>
+    /// 关闭视频并释放资源
+    /// </summary>
+    void CloseVideo()
+    {
+        if (_assembleVideoPlayer != null)
+        {
+            _assembleVideoPlayer.Stop();
+            _assembleVideoPlayer.loopPointReached -= OnVideoEnd;
+        }
+        if (videoRawImage != null)
+            videoRawImage.texture = null;
+        if (videoPanel != null)
+            videoPanel.SetActive(false);
+    }
+
+    /// <summary>
+    /// 视频播放完毕回调：组装完成、存档、新增物品至背包
+    /// </summary>
+    void OnVideoEnd(VideoPlayer vp)
+    {
+        _currentPlayCount++;
+        // 未达到播放次数则循环播放
+        if (_currentPlayCount < playTimes)
+        {
+            vp.Play();
+            return;
+        }
+        CloseVideo();
+
+        // 仅首次组装执行新增物品逻辑
+        if (!_isAssembled)
+        {
+            if (!GameGlobalData.instance.IsPartFinished(partKey))
+            {
+                GameGlobalData.instance.SetPartFinished(partKey);
+
+                Debug.Log($"[{gameObject.name}] 组装完成，准备添加物品至背包");
+                // 逐层空值校验，打印定位问题
+                if (itemData == null)
+                {
+                    Debug.LogError($"{gameObject.name} 未拖拽赋值 ItemData");
+                }
+                else if (BagShowVideoManager.instance == null)
+                {
+                    Debug.LogError("BagShowVideoManager单例为空，无法存入物品");
+                }
+                else
+                {
+                    // 传递完整ItemData给背包管理器
+                    BagShowVideoManager.instance.AddItemToBag(itemData);
+                    Debug.Log($"成功传递物品：{itemData.itemTitle}");
+                }
+            }
+
+            // 更新零件外观为组装完成样式
+            _isAssembled = true;
+            _spriteRenderer.sprite = assembledSprite;
+            transform.position = assembledPos;
+            transform.localScale = assembledScale;
+
+            // 弹出操作提示
+            if (HintManager.instance != null)
+            {
+                HintManager.instance.ShowHint("已解锁物品，按Tab打开背包查看");
+            }
+        }
+        InteractExclamationTip tipComp = GetComponent<InteractExclamationTip>();
+        if (tipComp != null)
+        {
+            tipComp.CompleteInteract();
+        }
+    }
+
+    void OnDestroy()
+    {
+        // 释放渲染纹理防止内存泄漏
+        if (_renderTexture != null)
+        {
+            _renderTexture.Release();
+            Destroy(_renderTexture);
+        }
+        if (_assembleVideoPlayer != null)
+        {
+            Destroy(_assembleVideoPlayer);
+        }
+    }
+}

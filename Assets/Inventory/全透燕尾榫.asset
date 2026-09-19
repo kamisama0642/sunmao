@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9446f177c76be25498ec9c9491bdd4e4, type: 3}
+  m_Name: "\u5168\u900F\u71D5\u5C3E\u69AB"
+  m_EditorClassIdentifier: 
+  itemTitle: "\u5168\u900F\u71D5\u5C3E\u69AB"
+  itemDescription: "\u5168\u900F\u71D5\u5C3E\u69AB\u69AB\u9F7F\u8D2F\u901A\u4E24\u9762\uFF0C\u4EA4\u9519\u54AC\u5408\u9501\u5B9A\u677F\u6750\uFF0C\u65E0\u9700\u8F85\u52A9\u52A0\u56FA\uFF0C\u591A\u7528\u4E8E\u5B9E\u6728\u7BB1\u4F53\u56DB\u89D2\u62FC\u63A5\u3002"
+  itemSprite: {fileID: 21300000, guid: dd33d6e0ce315eb42a244b037884d93c, type: 3}
+  itemVideo: {fileID: 32900000, guid: 98b295b395fb95344b3b5fa6f88f48ea, type: 3}
+  autoPlay: 1
