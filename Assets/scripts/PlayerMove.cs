@@ -11,6 +11,8 @@ public class PlayerMove : MonoBehaviour
     [Header("状态标记")]
     private bool isFacingRight = true; // 角色朝向
     private Vector2 currentVelocity;   // 当前速度缓存，减少重复获取
+    private float horizontalInput;     // 本帧水平输入缓存（Update采集，FixedUpdate/动画共用）
+    private float verticalInput;       // 本帧垂直输入缓存
 
     // 动画参数哈希值
     private static readonly int AnimWalk = Animator.StringToHash("walk");
@@ -34,50 +36,68 @@ public class PlayerMove : MonoBehaviour
 
     private void Update()
     {
-        GetInput();       // 获取输入
+        GetInput();       // 采集输入（仅此一处读取输入轴）
         UpdateAnimation();// 更新动画
         FlipController(); // 角色翻转
     }
 
-    /// <summary>
-    /// 简化输入处理：用GetAxis获取平滑输入，替代大量KeyDown/KeyUp判断
-    /// </summary>
-    private void GetInput()
+    private void FixedUpdate()
     {
-        // 获取水平/垂直输入，自动处理按键按下/抬起
-        float horizontal = Input.GetAxisRaw("Horizontal"); // A/D ←→
-        float vertical = Input.GetAxisRaw("Vertical");     // W/S ↑↓
-
-        // 计算目标速度
-        currentVelocity = new Vector2(horizontal * moveSpeed, vertical * moveSpeed);
-
-        // 应用速度到刚体
+        // 物理速度统一在FixedUpdate中应用
         rb.velocity = currentVelocity;
     }
 
     /// <summary>
-    /// 优化动画控制：精准判断输入状态，而非仅靠速度
-    /// 修复“无按键仍播放走路动画”的核心问题
+    /// 输入采集：全脚本唯一的 GetAxisRaw 读取点，结果缓存供动画/物理复用
+    /// </summary>
+    private void GetInput()
+    {
+        horizontalInput = Input.GetAxisRaw("Horizontal"); // A/D ←→
+        verticalInput = Input.GetAxisRaw("Vertical");     // W/S ↑↓
+
+        // 计算目标速度
+        currentVelocity = new Vector2(horizontalInput * moveSpeed, verticalInput * moveSpeed);
+    }
+
+    /// <summary>
+    /// 动画状态判定（优先级：静止 > 水平 > 垂直），
+    /// 保证任意输入组合下至少一个状态为true，修复斜向移动时动画卡在上一状态的问题。
+    /// TODO：未来可在编辑器内把6个Bool参数合并为单一int状态参数，进一步简化状态机。
     /// </summary>
     private void UpdateAnimation()
     {
-        // 提取水平/垂直输入
-        float horizontal = Input.GetAxisRaw("Horizontal");
-        float vertical = Input.GetAxisRaw("Vertical");
+        bool isIdle = Mathf.Approximately(horizontalInput, 0f) && Mathf.Approximately(verticalInput, 0f);
 
-        // 基础状态判断
-        bool isMovingHorizontal = Mathf.Abs(horizontal) > 0.1f; // 水平移动
-        bool isMovingUp = vertical > 0.1f;                       // 向上移动
-        bool isMovingDown = vertical < -0.1f;                    // 向下移动
-        bool isIdle = !isMovingHorizontal && !isMovingUp && !isMovingDown; // 完全静止
+        if (isIdle)
+        {
+            SetAnimState(false, false, false, true);
+        }
+        else if (Mathf.Abs(horizontalInput) > 0.1f)
+        {
+            // 水平移动优先（与翻转逻辑一致），斜向时也播放走路
+            SetAnimState(true, false, false, false);
+        }
+        else if (verticalInput > 0.1f)
+        {
+            SetAnimState(false, true, false, false); // 仅向上：back
+        }
+        else
+        {
+            SetAnimState(false, false, true, false); // 仅向下：forward
+        }
+    }
 
-        // 动画状态赋值
-        anim.SetBool(AnimWalk, isMovingHorizontal && !isMovingUp && !isMovingDown); // 仅水平移动时播放走路
-        anim.SetBool(AnimBack, isMovingUp && !isMovingHorizontal);                  // 仅向上移动时播放back
-        anim.SetBool(AnimForward, isMovingDown && !isMovingHorizontal);             // 仅向下移动时播放forward
-        anim.SetBool(AnimIdle, isIdle);                                             // 完全静止时idle
-        anim.SetBool(AnimBackIdle, isIdle);                                         // 原逻辑：backidle=idle
-        anim.SetBool(AnimForwardIdle, isIdle);                                      // 原逻辑：forwardidle=idle
+    /// <summary>
+    /// 一次性写入六个动画状态参数，保证互斥
+    /// </summary>
+    private void SetAnimState(bool walk, bool back, bool forward, bool idle)
+    {
+        anim.SetBool(AnimWalk, walk);
+        anim.SetBool(AnimBack, back);
+        anim.SetBool(AnimForward, forward);
+        anim.SetBool(AnimIdle, idle);
+        anim.SetBool(AnimBackIdle, idle);  // 原逻辑：backidle与idle同步
+        anim.SetBool(AnimForwardIdle, idle); // 原逻辑：forwardidle与idle同步
     }
 
     /// <summary>
