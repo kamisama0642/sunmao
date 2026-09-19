@@ -107,10 +107,4 @@ public class PlayerMove : MonoBehaviour
         localScale.x *= -1;
         transform.localScale = localScale;
     }
-
-    // 调试用，显示当前速度和朝向
-    private void OnGUI()
-    {
-        GUI.Label(new Rect(10, 10, 200, 20), $"速度：{rb.velocity} 朝向右：{isFacingRight}");
-    }
 }

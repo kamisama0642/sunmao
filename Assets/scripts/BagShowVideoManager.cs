@@ -7,7 +7,7 @@ using System.Collections.Generic;
 /// <summary>
 /// 唯一背包管理器
 /// 挂载：场景根物体 GlobalCanvasRoot
-/// 新增预览父物体统一控制，完善日志定位空白问题
+/// Tab键开关背包，点击格子预览物品标题/描述/视频
 /// </summary>
 public class BagShowVideoManager : MonoBehaviour
 {
@@ -58,24 +58,11 @@ public class BagShowVideoManager : MonoBehaviour
         InitBagSlots();
     }
 
-    private void Start()
-    {
-        Debug.Log("背包脚本启用，Tab监听正常运行");
-    }
-
     private void Update()
     {
-            // 按T强制读取下标0物品
-            if (Input.GetKeyDown(KeyCode.T))
-            {
-                Debug.Log("=====手动调用预览，下标0====");
-                OnClickBagSlot(0);
-            }
-
         // Tab键切换背包显隐
-        if (Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(GameKeys.Bag))
         {
-            Debug.Log("===== Tab按键触发 =====");
             // 校验全局UI单例
             if (GlobalUIRef.Instance == null)
             {
@@ -92,7 +79,6 @@ public class BagShowVideoManager : MonoBehaviour
             bool newState = !bagPanel.activeSelf;
             bagPanel.SetActive(newState);
             Canvas.ForceUpdateCanvases();
-            Debug.Log($"背包切换至：{(newState ? "打开" : "关闭")}");
 
             // 打开背包刷新格子，关闭清空预览
             if (newState)
@@ -133,7 +119,6 @@ public class BagShowVideoManager : MonoBehaviour
     /// </summary>
     public void AddItemToBag(ItemData item)
     {
-        Debug.Log($"背包接收物品：{(item == null ? "空数据" : item.itemTitle)}");
         if (item == null)
         {
             Debug.LogError("AddItemToBag：传入ItemData为空");
@@ -159,7 +144,6 @@ public class BagShowVideoManager : MonoBehaviour
         bagItemSlots[currentItemCount].sprite = item.itemSprite;
         bagItemSlots[currentItemCount].enabled = true;
         currentItemCount++;
-        Debug.Log($"物品添加完成，当前总数：{currentItemCount}");
     }
 
     /// <summary>
@@ -167,7 +151,6 @@ public class BagShowVideoManager : MonoBehaviour
     /// </summary>
     public void RefreshBagUIFromCache()
     {
-        Debug.Log($"刷新背包，缓存物品总数：{ownedItemCache.Count}");
         // 打开背包先隐藏预览
         if (itemPreviewPanel != null)
             itemPreviewPanel.SetActive(false);
@@ -186,19 +169,15 @@ public class BagShowVideoManager : MonoBehaviour
             if (currentItemCount >= bagItemSlots.Length) break;
             bagItemSlots[currentItemCount].sprite = item.itemSprite;
             bagItemSlots[currentItemCount].enabled = true;
-            Debug.Log($"格子{currentItemCount}载入物品：{item.itemTitle}");
             currentItemCount++;
         }
-        Debug.Log("背包刷新完毕");
     }
 
     /// <summary>
     /// 点击格子，加载物品标题/描述/预览视频
-    /// 增加完整日志，快速定位空白原因
     /// </summary>
     public void OnClickBagSlot(int index)
     {
-        Debug.Log($"点击格子下标：{index}");
         if (index >= ownedItemCache.Count)
         {
             Debug.LogWarning("该下标无物品数据");
@@ -213,7 +192,6 @@ public class BagShowVideoManager : MonoBehaviour
             CloseItemPreview();
             return;
         }
-        Debug.Log($"选中物品资源：{target.name}，标题内容：{target.itemTitle}");
 
         // 弹出预览总面板
         if (itemPreviewPanel != null)
@@ -226,7 +204,6 @@ public class BagShowVideoManager : MonoBehaviour
         {
             itemTitleText.text = target.itemTitle;
             itemTitleText.gameObject.SetActive(true);
-            Debug.Log($"标题赋值完成：{target.itemTitle}");
         }
         else
         {
@@ -238,7 +215,6 @@ public class BagShowVideoManager : MonoBehaviour
         {
             itemDescText.text = target.itemDescription;
             itemDescText.gameObject.SetActive(true);
-            Debug.Log($"描述赋值完成：{target.itemDescription}");
         }
         else
         {
@@ -251,10 +227,6 @@ public class BagShowVideoManager : MonoBehaviour
             if (target.itemVideo == null)
                 Debug.LogWarning("该物品无预览视频Clip");
             PlayBagItemVideo(target.itemVideo);
-        }
-        else
-        {
-            Debug.Log("物品autoPlay关闭，不自动播放视频");
         }
     }
 

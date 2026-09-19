@@ -15,7 +15,7 @@ public class Sign : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T) && signEnabled)
+        if (Input.GetKeyDown(GameKeys.Interact) && signEnabled)
         {
             if (dialogBox != null && dialogBoxText != null)
             {
