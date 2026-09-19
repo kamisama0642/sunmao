@@ -76,7 +76,7 @@ public class ClickToPlayAnimation : MonoBehaviour
         _assembleVideoPlayer.playOnAwake = false;
         _assembleVideoPlayer.renderMode = VideoRenderMode.RenderTexture;
 
-        // 拉取全局UI单例
+        // 拉取全局UI单例；缺失时禁用自身（弹窗/视频不可用但不崩溃）
         if (GlobalUIRef.Instance == null)
         {
             Debug.LogError($"{gameObject.name}：全局UI单例未初始化！");
@@ -100,32 +100,29 @@ public class ClickToPlayAnimation : MonoBehaviour
         // 弹窗快捷键
         if (_isDialogShowing)
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (Input.GetKeyDown(GameKeys.Interact))
             {
                 CloseDialog();
                 PlayVideoAnim();
             }
-            if (Input.GetKeyDown(KeyCode.E))
+            if (Input.GetKeyDown(GameKeys.Cancel))
                 CloseDialog();
         }
 
         // 视频面板关闭快捷键
-        if (videoPanel.activeSelf && Input.GetKeyDown(KeyCode.E))
+        if (videoPanel.activeSelf && Input.GetKeyDown(GameKeys.ClosePanel))
         {
             CloseVideo();
         }
     }
 
     /// <summary>
-    /// 2D射线检测是否点击当前零件
+    /// 2D点检测是否点击当前零件
     /// </summary>
     void RayCastClick()
     {
-        Vector3 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 mousePos2D = new Vector2(mouseWorldPos.x, mouseWorldPos.y);
-        RaycastHit2D hitInfo = Physics2D.Raycast(mousePos2D, Vector2.zero);
-
-        if (hitInfo && hitInfo.collider.gameObject == gameObject)
+        Collider2D hit = Physics2D.OverlapPoint(InputHelper.MouseWorldPos);
+        if (hit != null && hit.gameObject == gameObject)
         {
             OpenDialog();
         }
@@ -236,8 +233,7 @@ public class ClickToPlayAnimation : MonoBehaviour
             {
                 GameGlobalData.Instance.SetPartFinished(partKey);
 
-                Debug.Log($"[{gameObject.name}] 组装完成，准备添加物品至背包");
-                // 逐层空值校验，打印定位问题
+                // 传递完整ItemData给背包管理器
                 if (itemData == null)
                 {
                     Debug.LogError($"{gameObject.name} 未拖拽赋值 ItemData");
@@ -248,9 +244,11 @@ public class ClickToPlayAnimation : MonoBehaviour
                 }
                 else
                 {
-                    // 传递完整ItemData给背包管理器
                     BagShowVideoManager.Instance.AddItemToBag(itemData);
-                    Debug.Log($"成功传递物品：{itemData.itemTitle}");
+                    if (HintManager.Instance != null)
+                    {
+                        HintManager.Instance.ShowHint("已解锁物品，按Tab打开背包查看");
+                    }
                 }
             }
 
@@ -259,12 +257,6 @@ public class ClickToPlayAnimation : MonoBehaviour
             _spriteRenderer.sprite = assembledSprite;
             transform.position = assembledPos;
             transform.localScale = assembledScale;
-
-            // 弹出操作提示
-            if (HintManager.Instance != null)
-            {
-                HintManager.Instance.ShowHint("已解锁物品，按Tab打开背包查看");
-            }
         }
         InteractExclamationTip tipComp = GetComponent<InteractExclamationTip>();
         if (tipComp != null)
