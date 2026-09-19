@@ -10,7 +10,7 @@ public class ClickPortalEnter : MonoBehaviour
     [Header("目标场景名称")]
     public string targetSceneName = "workroom";
     [Header("本门专属出生坐标")]
-    public Vector2 playerSpawnPos = new Vector2(2.8f, -2f);
+    public Vector2 playerSpawnPos = new Vector2(2.9f, -1.5f);
 
     private Collider2D portalCol;
     private bool isLoadingScene = false;

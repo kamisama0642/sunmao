@@ -194,6 +194,22 @@ PrefabInstance:
       propertyPath: m_UseFullKinematicContacts
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7433120460141976861, guid: 3babd528ab68ae44c9751a7d532720fb, type: 3}
+      propertyPath: m_Size.x
+      value: 0.45668077
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433120460141976861, guid: 3babd528ab68ae44c9751a7d532720fb, type: 3}
+      propertyPath: m_Size.y
+      value: 0.55063677
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433120460141976861, guid: 3babd528ab68ae44c9751a7d532720fb, type: 3}
+      propertyPath: m_Offset.x
+      value: -0.08929753
+      objectReference: {fileID: 0}
+    - target: {fileID: 7433120460141976861, guid: 3babd528ab68ae44c9751a7d532720fb, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.34034714
+      objectReference: {fileID: 0}
     - target: {fileID: 9216453639398625948, guid: 3babd528ab68ae44c9751a7d532720fb, type: 3}
       propertyPath: m_LocalScale.x
       value: 1.5
@@ -988,8 +1004,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: New Text
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5793539675e8e89479f34262088fcca1, type: 2}
-  m_sharedMaterial: {fileID: -4129422098433654129, guid: 5793539675e8e89479f34262088fcca1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1135,7 +1151,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.005542338, y: 0.082540974}
+  m_Offset: {x: -0.005542338, y: -0.002985835}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -1146,7 +1162,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.21308482, y: 0.43306622}
+  m_Size: {x: 0.21308482, y: 0.2620126}
   m_EdgeRadius: 0
 --- !u!212 &469598781
 SpriteRenderer:
@@ -1736,9 +1752,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ca710dd99f439347952dc9a7720eda3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerObjName: player
   targetSceneName: workroom
-  playerSpawnPos: {x: 2.8, y: -2}
+  playerSpawnPos: {x: 2.9, y: -1.5}
 --- !u!61 &735053703
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2081,6 +2096,51 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 904315658}
   m_CullTransparentMesh: 1
+--- !u!1 &920000001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 920000002}
+  - component: {fileID: 920000003}
+  m_Layer: 0
+  m_Name: SaveGameMenu
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &920000002
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920000001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &920000003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 920000001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d0972d1328b9ea950a03d6a33358f76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  firstSceneName: playScenes
 --- !u!1 &965489316
 GameObject:
   m_ObjectHideFlags: 0
@@ -2245,8 +2305,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5793539675e8e89479f34262088fcca1, type: 2}
-  m_sharedMaterial: {fileID: -4129422098433654129, guid: 5793539675e8e89479f34262088fcca1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2898,7 +2958,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 1
-  m_Offset: {x: -3.475257, y: -2.4028087}
+  m_Offset: {x: -3.779573, y: -2.6772897}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2909,7 +2969,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 1.1487589, y: 2.309143}
+  m_Size: {x: 1.3277683, y: 3.0490499}
   m_EdgeRadius: 0
 --- !u!483693784 &1411108507
 TilemapRenderer:
@@ -3064,7 +3124,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 2.3524213, y: 0.13510995}
+  m_Offset: {x: 2.5731997, y: -0.19904149}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3075,7 +3135,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.4175645, y: 0.34037676}
+  m_Size: {x: 1.85912, y: 1.0086789}
   m_EdgeRadius: 0
 --- !u!61 &1411108510
 BoxCollider2D:
@@ -3109,7 +3169,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 2.5878816, y: -2.67142}
+  m_Offset: {x: 2.623683, y: -2.67142}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3120,7 +3180,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.8625281, y: 1.2339306}
+  m_Size: {x: 0.7909248, y: 1.2339306}
   m_EdgeRadius: 0
 --- !u!61 &1411108511
 BoxCollider2D:
@@ -3199,7 +3259,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 1
-  m_Offset: {x: 0.9440687, y: -4.1420302}
+  m_Offset: {x: 1.2364514, y: -4.183799}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3210,7 +3270,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 3.7765393, y: 0.30004048}
+  m_Size: {x: 4.5999837, y: 0.38357663}
   m_EdgeRadius: 0
 --- !u!61 &1411108513
 BoxCollider2D:
@@ -3244,7 +3304,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 1
-  m_Offset: {x: -2.7436357, y: -4.071211}
+  m_Offset: {x: -2.7436357, y: -4.1487813}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3255,7 +3315,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 0.74634814, y: 0.39863396}
+  m_Size: {x: 0.7463484, y: 0.36283302}
   m_EdgeRadius: 0
 --- !u!61 &1411108514
 BoxCollider2D:
@@ -3334,7 +3394,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 1
-  m_Offset: {x: -1.3371468, y: 0.584202}
+  m_Offset: {x: -1.4206843, y: 0.34590197}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3345,7 +3405,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 1
   serializedVersion: 2
-  m_Size: {x: 5.829665, y: 0.796651}
+  m_Size: {x: 5.9967403, y: 1.273251}
   m_EdgeRadius: 0
 --- !u!61 &1411108517
 BoxCollider2D:
@@ -3379,7 +3439,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 3.2840693, y: 0.038657665}
+  m_Offset: {x: 3.6957905, y: -0.104549885}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3390,7 +3450,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 0.39186144, y: 6.522685}
+  m_Size: {x: 0.42766333, y: 6.8091}
   m_EdgeRadius: 0
 --- !u!61 &1411108519
 BoxCollider2D:
@@ -3590,8 +3650,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5793539675e8e89479f34262088fcca1, type: 2}
-  m_sharedMaterial: {fileID: -4129422098433654129, guid: 5793539675e8e89479f34262088fcca1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4344,8 +4404,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 5793539675e8e89479f34262088fcca1, type: 2}
-  m_sharedMaterial: {fileID: -4129422098433654129, guid: 5793539675e8e89479f34262088fcca1, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -4519,51 +4579,6 @@ PrefabInstance:
       addedObject: {fileID: 241806307}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7f114e3d305797743986ddd03ae00007, type: 3}
---- !u!1 &920000001
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 920000002}
-  - component: {fileID: 920000003}
-  m_Layer: 0
-  m_Name: SaveGameMenu
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &920000002
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 920000001}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &920000003
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 920000001}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d0972d1328b9ea950a03d6a33358f76, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  firstSceneName: playScenes
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -4578,4 +4593,4 @@ SceneRoots:
   - {fileID: 735053705}
   - {fileID: 2018342017}
   - {fileID: 158072145}
-  - {fileID: 920000001}
+  - {fileID: 920000002}
