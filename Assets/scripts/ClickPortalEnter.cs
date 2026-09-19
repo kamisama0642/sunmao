@@ -49,9 +49,16 @@ public class ClickPortalEnter : MonoBehaviour
         if (!playerInside) return;
 
         isLoadingScene = true;
+        // 先启动加载：目标场景不在Build Settings中时loadOp为null，恢复状态避免卡死
+        AsyncOperation loadOp = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Single);
+        if (loadOp == null)
+        {
+            Debug.LogError($"传送门 {gameObject.name}：目标场景 {targetSceneName} 不在Build Settings中！");
+            isLoadingScene = false;
+            return;
+        }
         // 传送前把玩家移出屏幕，消除残影
         player.transform.position = new Vector2(-9999, -9999);
-        AsyncOperation loadOp = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Single);
 
         loadOp.completed += (op) =>
         {

@@ -109,6 +109,8 @@ public class GameGlobalData : MonoBehaviour
     public void ClearAllProgress()
     {
         finishedPartDict.Clear();
+        // 交互记录一并清空，避免此后任意MarkInteracted触发Save()时旧数据随档复活
+        GlobalInteractRecord.Instance.ResetAll();
         SaveSystem.DeleteSave();
     }
 }

@@ -134,6 +134,11 @@ public class BagShowVideoManager : MonoBehaviour
             Debug.LogWarning("AddItemToBag：背包格子已满");
             return;
         }
+        if (bagItemSlots[currentItemCount] == null)
+        {
+            Debug.LogError("AddItemToBag：格子数组存在空元素，请检查Inspector绑定");
+            return;
+        }
         if (ownedItemCache.Exists(x => x == item))
         {
             Debug.LogWarning($"物品【{item.itemTitle}】已存在，跳过");
@@ -178,7 +183,7 @@ public class BagShowVideoManager : MonoBehaviour
     /// </summary>
     public void OnClickBagSlot(int index)
     {
-        if (index >= ownedItemCache.Count)
+        if (index < 0 || index >= ownedItemCache.Count)
         {
             Debug.LogWarning("该下标无物品数据");
             CloseItemPreview();

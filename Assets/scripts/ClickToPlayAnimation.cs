@@ -60,6 +60,10 @@ public class ClickToPlayAnimation : MonoBehaviour
             transform.position = assembledPos;
             transform.localScale = assembledScale;
             _isAssembled = true;
+
+            // 存档恢复：已组装零件的物品重新放入背包（AddItemToBag内部按引用去重）
+            if (itemData != null && BagShowVideoManager.Instance != null)
+                BagShowVideoManager.Instance.AddItemToBag(itemData);
         }
         else
         {
@@ -87,6 +91,13 @@ public class ClickToPlayAnimation : MonoBehaviour
         dialogTipText = GlobalUIRef.Instance.dialogTipText;
         videoPanel = GlobalUIRef.Instance.videoPanel;
         videoRawImage = GlobalUIRef.Instance.videoRawImage;
+
+        // videoPanel 在Update中被直接解引用，缺失时提前禁用自身，防止每帧NRE
+        if (videoPanel == null)
+        {
+            Debug.LogError($"{gameObject.name}：GlobalUIRef未绑定videoPanel！");
+            enabled = false;
+        }
     }
 
     void Update()
@@ -97,15 +108,15 @@ public class ClickToPlayAnimation : MonoBehaviour
             RayCastClick();
         }
 
-        // 弹窗快捷键
+        // 弹窗快捷键：Q确认播放 / E取消
         if (_isDialogShowing)
         {
-            if (Input.GetKeyDown(GameKeys.Interact))
+            if (Input.GetKeyDown(GameKeys.DialogConfirm))
             {
                 CloseDialog();
                 PlayVideoAnim();
             }
-            if (Input.GetKeyDown(GameKeys.Cancel))
+            if (Input.GetKeyDown(GameKeys.DialogCancel))
                 CloseDialog();
         }
 
