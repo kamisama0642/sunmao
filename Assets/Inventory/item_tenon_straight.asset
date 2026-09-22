@@ -17,3 +17,4 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: 2efff8d874502f846bffd7d7cdf2ed8b, type: 3}
   itemVideo: {fileID: 32900000, guid: 80e7a61a6980e2349820b52a92ff0e19, type: 3}
   autoPlay: 1
+  partKey: 1

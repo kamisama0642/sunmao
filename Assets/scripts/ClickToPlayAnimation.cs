@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Video;
 using TMPro;
+using System.Collections.Generic;
 
 /// <summary>
 /// 可交互组装零件点击脚本
@@ -20,6 +21,10 @@ public class ClickToPlayAnimation : MonoBehaviour
     public VideoClip videoClip;
     [Tooltip("视频循环播放次数，默认1次")]
     public int playTimes = 1;
+
+    [Header("前置条件（需已组装完成的物品）")]
+    [Tooltip("缺任意一项时点击只提示，不进入组装流程；留空表示无前置条件")]
+    public ItemData[] requiredItems;
 
     [Header("零件外观素材")]
     public Sprite originalSprite;
@@ -40,6 +45,7 @@ public class ClickToPlayAnimation : MonoBehaviour
 
     private SpriteRenderer _spriteRenderer;
     private bool _isAssembled = false;
+    private bool _requirementsMet = true;
     private bool _isDialogShowing = false;
     private int _currentPlayCount = 0;
     private RenderTexture _renderTexture;
@@ -113,8 +119,10 @@ public class ClickToPlayAnimation : MonoBehaviour
         {
             if (Input.GetKeyDown(GameKeys.DialogConfirm))
             {
+                bool canPlay = _requirementsMet;
                 CloseDialog();
-                PlayVideoAnim();
+                if (canPlay)
+                    PlayVideoAnim();
             }
             if (Input.GetKeyDown(GameKeys.DialogCancel))
                 CloseDialog();
@@ -135,6 +143,13 @@ public class ClickToPlayAnimation : MonoBehaviour
         Collider2D hit = Physics2D.OverlapPoint(InputHelper.MouseWorldPos);
         if (hit != null && hit.gameObject == gameObject)
         {
+            // 点击时先检查前置条件；缺少物品只提示，不进入确认流程
+            List<ItemData> missing = BagChecker.GetMissingItems(requiredItems);
+            if (missing.Count > 0)
+            {
+                ShowMissingTip(missing);
+                return;
+            }
             OpenDialog();
         }
     }
@@ -142,6 +157,28 @@ public class ClickToPlayAnimation : MonoBehaviour
     /// <summary>
     /// 打开确认弹窗
     /// </summary>
+    /// <summary>
+    /// 前置条件不满足时，用全局弹窗显示缺少的物品（Q/E 均可关闭，不会播放动画）
+    /// </summary>
+    void ShowMissingTip(List<ItemData> missing)
+    {
+        if (dialogBox == null || dialogTipText == null)
+        {
+            Debug.LogError($"{gameObject.name}：弹窗UI缺失，请检查GlobalUIRef绑定");
+            return;
+        }
+
+        _requirementsMet = false;
+        _isDialogShowing = true;
+        dialogBox.SetActive(true);
+        Canvas.ForceUpdateCanvases();
+
+        List<string> names = new List<string>();
+        foreach (ItemData item in missing)
+            names.Add(item != null ? item.itemTitle : "(未命名物品)");
+        dialogTipText.text = "还缺少：" + string.Join("、", names) + "（E关闭）";
+    }
+
     void OpenDialog()
     {
         if (dialogBox == null || dialogTipText == null)
@@ -149,6 +186,7 @@ public class ClickToPlayAnimation : MonoBehaviour
             Debug.LogError($"{gameObject.name}：弹窗UI缺失，请检查GlobalUIRef绑定");
             return;
         }
+        _requirementsMet = true;
         _isDialogShowing = true;
         dialogBox.SetActive(true);
         Canvas.ForceUpdateCanvases();
