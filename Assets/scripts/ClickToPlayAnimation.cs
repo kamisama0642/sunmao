@@ -301,6 +301,10 @@ public class ClickToPlayAnimation : MonoBehaviour
                 }
             }
 
+            // 通知新物品解锁流程
+            if (ItemUnlockFlow.Instance != null)
+                ItemUnlockFlow.Instance.NotifyItemObtained(itemData);
+
             // 更新零件外观为组装完成样式
             _isAssembled = true;
             _spriteRenderer.sprite = assembledSprite;
