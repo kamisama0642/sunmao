@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/workroom.unity
     guid: 394db3ab80801a840bd34207ae388712
+  - enabled: 1
+    path: Assets/Scenes/outground.unity
+    guid: db5d506f794a51345956fa69fb204bac
   m_configObjects: {}

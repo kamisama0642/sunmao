@@ -1,68 +1,94 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 /// <summary>
-/// µã»÷´«ËÍÃÅÇĞ»»³¡¾°
-/// Íæ¼ÒÅĞ¶Ï»ùÓÚ PlayerManager.OnlyPlayer ÒıÓÃ£¨º¬×ÓÎïÌå£©£¬²»ÔÙÊ¹ÓÃÎïÌåÃû×Ö·û´®±È¶Ô
+/// ä¼ é€é—¨åœºæ™¯åˆ‡æ¢è„šæœ¬ï¼ˆè¿›å…¥è§¦å‘å™¨è‡ªåŠ¨ä¼ é€ï¼‰
+/// ç©å®¶è¿›å…¥è§¦å‘å™¨èŒƒå›´å³è‡ªåŠ¨å°è¯•åˆ‡æ¢åœºæ™¯
+/// å‰ç½®æ¡ä»¶ï¼šrequiredItems éœ€å·²ç»„è£…å®Œæˆï¼ˆè°ƒç”¨ BagChecker å¯¹æ¯”å­˜æ¡£ finishedPartsï¼‰
+/// æ¡ä»¶ä¸æ»¡è¶³æ—¶ç”¨ GlobalUIRef å¼¹çª—æç¤ºç¼ºå°‘çš„ç‰©å“ï¼ŒE/Q å…³é—­
+/// æŒ‚è½½ç‰©ä½“éœ€è¦ Collider2D å¹¶å‹¾é€‰ Is Trigger
 /// </summary>
 public class ClickPortalEnter : MonoBehaviour
 {
-    [Header("Ä¿±ê³¡¾°Ãû³Æ")]
+    [Header("ç›®æ ‡åœºæ™¯åç§°")]
     public string targetSceneName = "workroom";
-    [Header("±¾ÃÅ×¨Êô³öÉú×ø±ê")]
-    public Vector2 playerSpawnPos = new Vector2(2.8f, -2f);
+    [Header("ç©å®¶ä¸“ç”¨å‡ºç”Ÿç‚¹åæ ‡")]
+    public Vector2 playerSpawnPos = new Vector2(2.9f, -1.5f);
+    [Header("å‰ç½®æ¡ä»¶ï¼ˆéœ€å·²ç»„è£…å®Œæˆçš„ç‰©å“ï¼‰")]
+    [Tooltip("ç¼ºä»»æ„ä¸€é¡¹æ—¶ä¸ä¼ é€ï¼Œæ”¹ä¸ºæç¤ºç¼ºå°‘çš„ç‰©å“ï¼›ç•™ç©ºè¡¨ç¤ºæ— æ¡ä»¶")]
+    public ItemData[] requiredItems;
 
     private Collider2D portalCol;
     private bool isLoadingScene = false;
+    private bool _isShowingMissingTip = false;
 
     void Start()
     {
         portalCol = GetComponent<Collider2D>();
         if (portalCol == null)
         {
-            Debug.LogError($"´«ËÍÃÅ {gameObject.name} È±ÉÙCollider2D´¥·¢Æ÷£¡");
+            Debug.LogError($"ä¼ é€é—¨ {gameObject.name} ç¼ºå°‘Collider2Dç»„ä»¶ï¼");
             enabled = false;
+        }
+        else if (!portalCol.isTrigger)
+        {
+            Debug.LogWarning($"ä¼ é€é—¨ {gameObject.name} çš„ Collider2D æœªå‹¾é€‰ Is Triggerï¼Œè‡ªåŠ¨ä¼ é€ä¸ä¼šç”Ÿæ•ˆ");
         }
     }
 
-    void OnMouseDown()
+    void Update()
     {
-        if (portalCol == null || isLoadingScene) return;
+        // ç¼ºå°‘ç‰©å“æç¤ºï¼šE æˆ– Q å…³é—­
+        if (_isShowingMissingTip &&
+            (Input.GetKeyDown(GameKeys.DialogCancel) || Input.GetKeyDown(GameKeys.DialogConfirm)))
+        {
+            HideMissingTip();
+        }
+    }
 
-        // Íæ¼ÒÓÉ PlayerManager Í³Ò»¹ÜÀí£»ÎŞÍæ¼ÒÊ±£¨Èçµ¥¶ÀÔËĞĞ±¾³¡¾°£©Ö±½Ó²»ÏìÓ¦
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (isLoadingScene) return;
+
+        // åªå“åº”ç©å®¶è¿›å…¥
         PlayerManager pm = PlayerManager.Instance;
         GameObject player = pm != null ? PlayerManager.OnlyPlayer : null;
         if (player == null) return;
+        if (other.transform != player.transform && !other.transform.IsChildOf(player.transform)) return;
 
-        // ÅĞ¶ÏÍæ¼Ò£¨»òÆä×ÓÎïÌåÉÏµÄÅö×²Ìå£©ÊÇ·ñÕ¾ÔÚÃÅÄÚ
-        Collider2D[] hits = new Collider2D[20];
-        int hitCount = Physics2D.OverlapCollider(portalCol, new ContactFilter2D(), hits);
-        bool playerInside = false;
-        for (int i = 0; i < hitCount; i++)
+        // å‰ç½®æ¡ä»¶æ£€æŸ¥ï¼šè°ƒç”¨èƒŒåŒ…æ£€æµ‹è„šæœ¬å¯¹æ¯”å­˜æ¡£
+        List<ItemData> missing = BagChecker.GetMissingItems(requiredItems);
+        if (missing.Count > 0)
         {
-            if (hits[i] != null && hits[i].transform.IsChildOf(player.transform))
-            {
-                playerInside = true;
-                break;
-            }
+            ShowMissingTip(missing);
+            return;
         }
-        if (!playerInside) return;
 
+        EnterScene(player);
+    }
+
+    /// <summary>
+    /// åˆ‡æ¢åœºæ™¯ï¼Œå¹¶æŠŠè·¨åœºæ™¯ä¿ç•™çš„ç©å®¶æ”¾åˆ°ç›®æ ‡å‡ºç”Ÿç‚¹
+    /// </summary>
+    void EnterScene(GameObject player)
+    {
         isLoadingScene = true;
-        // ÏÈÆô¶¯¼ÓÔØ£ºÄ¿±ê³¡¾°²»ÔÚBuild SettingsÖĞÊ±loadOpÎªnull£¬»Ö¸´×´Ì¬±ÜÃâ¿¨ËÀ
+
         AsyncOperation loadOp = SceneManager.LoadSceneAsync(targetSceneName, LoadSceneMode.Single);
         if (loadOp == null)
         {
-            Debug.LogError($"´«ËÍÃÅ {gameObject.name}£ºÄ¿±ê³¡¾° {targetSceneName} ²»ÔÚBuild SettingsÖĞ£¡");
+            Debug.LogError($"ä¼ é€é—¨ {gameObject.name}ï¼šç›®æ ‡åœºæ™¯ {targetSceneName} ä¸åœ¨Build Settingsä¸­ï¼");
             isLoadingScene = false;
             return;
         }
-        // ´«ËÍÇ°°ÑÍæ¼ÒÒÆ³öÆÁÄ»£¬Ïû³ı²ĞÓ°
+
+        // åŠ è½½æœŸé—´æŠŠç©å®¶ç§»å‡ºå±å¹•ï¼Œé¿å…åˆ‡æ¢ç¬é—´æ®‹ç•™ç”»é¢
         player.transform.position = new Vector2(-9999, -9999);
 
         loadOp.completed += (op) =>
         {
-            // ¼ÓÔØÍê³ÉÏú»ÙËùÓĞ·ÖÉí£¨Ä¿±ê³¡¾°ÈôÄÚÖÃÍ¬ prefab ÊµÀı£¬Ôò±£Áô³Ö¾Ã»¯µÄÔ­Íæ¼Ò£©
+            // ç›®æ ‡åœºæ™¯è‡ªå¸¦åŒåç©å®¶åˆ†èº«æ—¶é”€æ¯ï¼Œé¿å…å‡ºç°ä¸¤ä¸ªç©å®¶
             GameObject[] allPlayers = Object.FindObjectsOfType<GameObject>(true);
             foreach (GameObject obj in allPlayers)
             {
@@ -74,5 +100,39 @@ public class ClickPortalEnter : MonoBehaviour
             player.transform.position = playerSpawnPos;
             isLoadingScene = false;
         };
+    }
+
+    /// <summary>
+    /// å‰ç½®æ¡ä»¶ä¸æ»¡è¶³æ—¶ï¼Œç”¨å…¨å±€å¼¹çª—æ˜¾ç¤ºç¼ºå°‘çš„ç‰©å“
+    /// </summary>
+    void ShowMissingTip(List<ItemData> missing)
+    {
+        GlobalUIRef ui = GlobalUIRef.Instance;
+        if (ui == null || ui.dialogBox == null || ui.dialogTipText == null)
+        {
+            Debug.LogError($"ä¼ é€é—¨ {gameObject.name}ï¼šå…¨å±€å¼¹çª—UIç¼ºå¤±ï¼Œæ— æ³•æç¤ºç¼ºå°‘çš„ç‰©å“");
+            return;
+        }
+
+        List<string> names = new List<string>();
+        foreach (ItemData item in missing)
+        {
+            names.Add(item != null ? item.itemTitle : "(æœªå‘½åç‰©å“)");
+        }
+
+        _isShowingMissingTip = true;
+        ui.dialogBox.SetActive(true);
+        Canvas.ForceUpdateCanvases();
+        ui.dialogTipText.text = "æ— æ³•å‰å¾€ï¼Œè¿˜ç¼ºå°‘ï¼š" + string.Join("ã€", names) + "ï¼ˆEå…³é—­ï¼‰";
+    }
+
+    void HideMissingTip()
+    {
+        _isShowingMissingTip = false;
+        GlobalUIRef ui = GlobalUIRef.Instance;
+        if (ui != null && ui.dialogBox != null)
+        {
+            ui.dialogBox.SetActive(false);
+        }
     }
 }
