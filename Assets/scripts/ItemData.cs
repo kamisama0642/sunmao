@@ -14,4 +14,7 @@ public class ItemData : ScriptableObject
     [Header("视频配置")]
     public VideoClip itemVideo;     // 物品对应的MP4视频
     public bool autoPlay = true;    // 点击格子后是否自动播放视频
+
+    [Header("存档标识")]
+    public string partKey;          // 与 ClickToPlayAnimation.partKey 保持一致
 }
