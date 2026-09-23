@@ -14,4 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/outground.unity
     guid: db5d506f794a51345956fa69fb204bac
+  - enabled: 1
+    path: Assets/Scenes/attic.unity
+    guid: 1fa526ff8a96ae64bb9be144cc3a2e78
   m_configObjects: {}
