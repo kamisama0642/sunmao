@@ -72,3 +72,7 @@ desktop.ini
 
 # 超出 GitHub 100MB 限制的大文件（本地保留）
 Assets/TextMesh Pro/Fonts/youmo SDF.asset
+
+# 本地字体目录（含 134MB SDF，不进仓库；克隆后需手动放回）
+Assets/Fonts/
+Assets/Fonts.meta
