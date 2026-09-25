@@ -14,6 +14,11 @@ public class BagShowVideoManager : MonoBehaviour
     [Header("背包UI拖拽绑定")]
     [Tooltip("所有背包格子Image数组，按顺序拖拽")]
     public Image[] bagItemSlots;
+    [Header("调试：空白格子的临时占位物品（留空=关闭）")]
+    [Tooltip("点击尚未获得物品的格子时显示该物品，仅用于测试，正式发布前清空")]
+    public ItemData debugPlaceholderItem;
+    [Tooltip("调试占位时描述文本的前缀，实际显示为 前缀+格子序号，例如 测试0")]
+    public string debugPlaceholderTextPrefix = "测试";
     [Tooltip("物品预览总父物体 bag/Show")]
     public GameObject itemPreviewPanel;
     [Tooltip("物品标题TMP文本")]
@@ -204,14 +209,27 @@ public class BagShowVideoManager : MonoBehaviour
     /// </summary>
     public void OnClickBagSlot(int index)
     {
+        ItemData target;
+        int debugSlotIndex = -1;
         if (index < 0 || index >= ownedItemCache.Count)
         {
-            Debug.LogWarning("该下标无物品数据");
-            CloseItemPreview();
-            return;
+            // 调试占位：配置了临时物品时，尚未获得物品的格子点击也显示它
+            if (debugPlaceholderItem != null && index >= 0 && bagItemSlots != null && index < bagItemSlots.Length)
+            {
+                target = debugPlaceholderItem;
+                debugSlotIndex = index;
+            }
+            else
+            {
+                Debug.LogWarning("该下标无物品数据");
+                CloseItemPreview();
+                return;
+            }
         }
-
-        ItemData target = ownedItemCache[index];
+        else
+        {
+            target = ownedItemCache[index];
+        }
         if (target == null)
         {
             Debug.LogError("缓存内该物品为空");
@@ -236,10 +254,12 @@ public class BagShowVideoManager : MonoBehaviour
             Debug.LogError("itemTitleText 标题文本未拖拽赋值！");
         }
 
-        // 赋值描述文本
+        // 赋值描述文本（调试占位时显示 前缀+格子序号）
         if (itemDescText != null)
         {
-            itemDescText.text = target.itemDescription;
+            itemDescText.text = debugSlotIndex >= 0
+                ? debugPlaceholderTextPrefix + debugSlotIndex
+                : target.itemDescription;
             itemDescText.gameObject.SetActive(true);
         }
         else
