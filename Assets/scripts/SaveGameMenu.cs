@@ -1,31 +1,45 @@
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 /// <summary>
-/// 存档菜单（雏形）：挂在场景空物体上
-/// Esc 打开/关闭菜单窗口，显示当前进度，提供"重新开始"（清空进度+删除存档+回到起始场景）
-/// 界面暂用IMGUI实现，窗口尺寸与字号随分辨率缩放；后续可替换为uGUI正式面板
+/// 游戏内 ESC 菜单（跨场景常驻，挂在 GlobalCanvasRoot 上，所有游戏场景均生效）
+/// 打开时显示当前进度，提供三个按键：继续游戏 / 返回主菜单 / 退出游戏
+/// 菜单样式图未导入，留 Image 字段，导入后在 Inspector 拖入
+/// "返回主菜单"不清档：之后可在主菜单点"继续游戏"接着玩
 /// </summary>
 public class SaveGameMenu : MonoBehaviour
 {
-    [Header("重新开始后回到的场景")]
-    public string firstSceneName = "playScenes";
+    [Header("面板与部件")]
+    public GameObject menuPanel;
+    public Image menuStyleImage;
+    public TMP_Text progressText;
+
+    [Header("按键（自上而下）")]
+    public Button continueButton;
+    public Button backToMainMenuButton;
+    public Button quitButton;
+
+    [Header("返回的主菜单场景")]
+    public string mainMenuSceneName = "mainMenu";
 
     private bool _menuOpen = false;
-    private Rect _windowRect;
-    // 缓存样式，避免OnGUI每帧新建
-    private GUIStyle _windowStyle;
-    private GUIStyle _infoLabel;
-    private GUIStyle _tipLabel;
-    private GUIStyle _bigButton;
-    private int _builtAtScale = -1;
 
-    private void Update()
+    void Start()
     {
-        if (!Input.GetKeyDown(GameKeys.ClosePanel))
-            return;
+        if (menuPanel != null) menuPanel.SetActive(false);
 
-        // 视频面板/背包打开时，Esc优先归它们处理，不弹菜单
+        if (continueButton != null) continueButton.onClick.AddListener(CloseMenu);
+        if (backToMainMenuButton != null) backToMainMenuButton.onClick.AddListener(BackToMainMenu);
+        if (quitButton != null) quitButton.onClick.AddListener(QuitGame);
+    }
+
+    void Update()
+    {
+        if (!Input.GetKeyDown(GameKeys.ClosePanel)) return;
+
+        // 视频面板/背包打开时，Esc 优先归它们处理
         GlobalUIRef ui = GlobalUIRef.Instance;
         bool otherPanelOpen = ui != null
             && ((ui.videoPanel != null && ui.videoPanel.activeSelf)
@@ -37,126 +51,46 @@ public class SaveGameMenu : MonoBehaviour
             CloseMenu();
     }
 
-    /// <summary>以1080p为基准的界面缩放倍数，高分屏自动放大</summary>
-    private float UiScale
-    {
-        get { return Mathf.Clamp(Screen.height / 1080f, 1f, 3f); }
-    }
-
-    private void OpenMenu()
+    void OpenMenu()
     {
         _menuOpen = true;
-        float scale = UiScale;
-        float width = 480f * scale;
-        float height = 340f * scale;
-        _windowRect = new Rect((Screen.width - width) / 2f, (Screen.height - height) / 2f, width, height);
+        RefreshProgress();
+        if (menuPanel != null) menuPanel.SetActive(true);
     }
 
-    private void CloseMenu()
+    void CloseMenu()
     {
         _menuOpen = false;
+        if (menuPanel != null) menuPanel.SetActive(false);
     }
 
-    private void OnGUI()
+    void RefreshProgress()
     {
-        if (!_menuOpen)
-            return;
-        EnsureStyles();
-        _windowRect = GUILayout.Window(0, _windowRect, DrawWindow, "存档", _windowStyle);
-    }
+        if (progressText == null) return;
 
-    /// <summary>
-    /// 按当前缩放倍数构建样式；分辨率变化时自动重建
-    /// </summary>
-    private void EnsureStyles()
-    {
-        int scale = Mathf.RoundToInt(UiScale);
-        if (_windowStyle != null && scale == _builtAtScale)
-            return;
-        _builtAtScale = scale;
-
-        _windowStyle = new GUIStyle(GUI.skin.window)
-        {
-            fontSize = Mathf.RoundToInt(18 * scale)
-        };
-        _infoLabel = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = Mathf.RoundToInt(20 * scale)
-        };
-        _tipLabel = new GUIStyle(GUI.skin.label)
-        {
-            fontSize = Mathf.RoundToInt(14 * scale)
-        };
-        _bigButton = new GUIStyle(GUI.skin.button)
-        {
-            fontSize = Mathf.RoundToInt(18 * scale)
-        };
-    }
-
-    private void DrawWindow(int id)
-    {
-        float scale = UiScale;
         GameGlobalData data = GameGlobalData.Instance;
         GlobalInteractRecord record = GlobalInteractRecord.Instance;
-
-        GUILayout.Space(10 * scale);
-        GUILayout.Label($"已组装零件：{data.finishedPartDict.Count}", _infoLabel);
-        GUILayout.Label($"已交互物品：{record.interactedIdList.Count}", _infoLabel);
-        GUILayout.Space(4 * scale);
-        GUILayout.Label("进度在每次关键操作后自动保存", _tipLabel);
-        GUILayout.Space(14 * scale);
-
-        if (GUILayout.Button("重新开始（清空进度并回到游戏开头）", _bigButton, GUILayout.Height(48 * scale)))
-        {
-            RestartGame();
-            return;
-        }
-        GUILayout.Space(8 * scale);
-        if (GUILayout.Button("继续游戏", _bigButton, GUILayout.Height(40 * scale)))
-            CloseMenu();
-
-        // 标题栏可拖动
-        GUI.DragWindow(new Rect(0, 0, 10000f, 30f * scale));
+        progressText.text = $"已组装零件：{data.finishedPartDict.Count}\n已交互物品：{record.interactedIdList.Count}";
     }
 
     /// <summary>
-    /// 重新开始：清空全部进度、删除存档、清空背包，并回到起始场景
+    /// 返回主菜单（不清档）
     /// </summary>
-    public void RestartGame()
+    public void BackToMainMenu()
     {
-        GameGlobalData.Instance.ClearAllProgress();
-        if (BagShowVideoManager.Instance != null)
-            BagShowVideoManager.Instance.ClearBag();
         CloseMenu();
 
-        // 持久化玩家在场景重载后需要重新安放：先记录引用，加载完成后处理
-        GameObject player = PlayerManager.Instance != null ? PlayerManager.OnlyPlayer : null;
+        AsyncOperation op = SceneManager.LoadSceneAsync(mainMenuSceneName, LoadSceneMode.Single);
+        if (op == null)
+            Debug.LogError($"SaveGameMenu：主菜单场景 {mainMenuSceneName} 不在Build Settings中！");
+    }
 
-        AsyncOperation loadOp = SceneManager.LoadSceneAsync(firstSceneName, LoadSceneMode.Single);
-        if (loadOp == null)
-        {
-            Debug.LogError($"SaveGameMenu：起始场景 {firstSceneName} 不在Build Settings中！");
-            return;
-        }
-        loadOp.completed += (op) =>
-        {
-            if (player == null)
-                return;
-            // 找到重载场景自带的玩家分身，借用其出生点后销毁，避免出现两个玩家
-            GameObject fresh = null;
-            foreach (GameObject obj in Object.FindObjectsOfType<GameObject>(true))
-            {
-                if (obj.name == player.name && obj != player)
-                {
-                    fresh = obj;
-                    break;
-                }
-            }
-            if (fresh != null)
-            {
-                player.transform.position = fresh.transform.position;
-                Destroy(fresh);
-            }
-        };
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
     }
 }
