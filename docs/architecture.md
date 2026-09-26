@@ -109,7 +109,7 @@
 | `chair` | ClickToPlayAnimation, InteractExclamationTip |
 | `wood-1` | Sign |
 | `Trigger_nextroom` | ClickPortalEnter |
-| `Trigger_attic` | ClickPortalEnter（Click 触发 + 需 Q 确认，目标 `attic`，玩家落点 `(-6.2, -3.3)`） |
+| `Trigger_attic` | ClickPortalEnter（Click 触发 + 需 Q 确认，目标 `attic`，玩家落点 `(-6.5, -4.29)`；碰撞盒由手调，覆盖神龛那幅画并向下延伸到玩家站位） |
 | `SaveGameMenu` | SaveGameMenu |
 | `playerManager` | PlayerManager |
 | 其余 | Canvas/EventSystem/Grid/Tilemap/Button/RawImage/TMP 文本等内置组件 |
@@ -128,9 +128,12 @@
 | 物体 | 挂载脚本 / 内容 |
 |---|---|
 | `Grid` → `Tilemap` | 整张阁楼地图当作一个 Tile 铺底（`Assets/Scenes/TileMaps/attic.asset` → `attic.png`，385×190、PPU 100、Point 过滤；Tilemap 缩放 5.3，地图中心在世界原点，相机正对） |
-| `Walls` | 4 个实体 BoxCollider2D，围出走行区域 x∈[-9.4, 9.4]、y∈[-4.5, -1.5] |
+| `Walls` | 4 个实体 BoxCollider2D 围出房间：左右内壁 `x=±9.4`、前壁内沿 `y=-4.5`、后壁内沿 `y=-0.1`（贴地板后沿，玩家能在地板上自由走动） |
+| `Furniture` | **17 个实体 BoxCollider2D，逐件对应画面里的家具**（柜子、椅子、斜靠的木板、凳子、长桌、工作台、箱子、麻袋、木框等）。每件是 `Grid/Furniture` 下的一个同名子物体（`furn_cabinet_big`…），碰撞盒下沿 = 该家具在图里的落地线、上沿到 `y=0.3`；要微调直接改对应子物体的 Position/Size 即可 |
 | `Trigger_back` | ClickPortalEnter（Auto：走到左下角活板门上自动回 `playScenes`，落点 `(0.24, -1.8)`） |
 | `Main Camera` | ortho 6，位置 `(0, 0, -10)` |
+
+家具碰撞箱的坐标来源：把 `attic.png`（有家具）与无家具的旧版逐件目测量出「落地线 + 左右边界」，再换算成世界坐标（1 图像像素 = 0.053 世界单位 = `PPU 100 × Tilemap 缩放 5.3`）。玩家碰撞体是「整个身子」（0.70×1.79，位于脚点上方 0.104~1.889），正好等于俯视视角里"站在家具前方"应有的进深——身体顶端停在家具落地线处，看起来就是紧贴着家具站着，因此家具碰撞箱不需要再往下延伸。
 
 `Assets/Prefabs/`
 

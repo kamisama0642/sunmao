@@ -1863,7 +1863,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &561675891
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3488,10 +3488,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetSceneName: attic
-  playerSpawnPos: {x: -6.2, y: -3.6}
+  playerSpawnPos: {x: -6.5, y: -4.29}
   triggerMode: 1
   requireConfirm: 1
-  confirmText: \u8981\u722C\u4E0A\u9601\u697C\u5417\uFF1F\uFF08Q \u786E\u8BA4 / E \u53D6\u6D88\uFF09
+  confirmText: \u8981\u722C\u4E0A\u9601\u697C\u5417\uFF1F\uFF08Q \u786E\u8BA4 / E
+    \u53D6\u6D88\uFF09
   requiredItems: []
 --- !u!61 &1292577758
 BoxCollider2D:
@@ -3525,7 +3526,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.10055363, y: -0.9049828}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3536,7 +3537,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.45, y: 2.1}
+  m_Size: {x: 1.2488928, y: 3.2664223}
   m_EdgeRadius: 0
 --- !u!4 &1292577759
 Transform:
