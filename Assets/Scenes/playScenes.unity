@@ -3491,8 +3491,7 @@ MonoBehaviour:
   playerSpawnPos: {x: -6.5, y: -4.29}
   triggerMode: 1
   requireConfirm: 1
-  confirmText: \u8981\u722C\u4E0A\u9601\u697C\u5417\uFF1F\uFF08Q \u786E\u8BA4 / E
-    \u53D6\u6D88\uFF09
+  confirmText: "\u8981\u722C\u4E0A\u9601\u697C\u5417\uFF1F\uFF08Q \u786E\u8BA4 / E \u53D6\u6D88\uFF09"
   requiredItems: []
 --- !u!61 &1292577758
 BoxCollider2D:
