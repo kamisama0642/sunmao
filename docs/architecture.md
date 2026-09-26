@@ -4,7 +4,7 @@
 
 - 引擎：Unity 2022.3.62f2c1（中国版），内置渲染管线，旧版 Input Manager（`activeInputHandler = 0`）
 - 产品名：`ONE OF TEN DEMO`，默认分辨率 1920x1080
-- 构建场景：`Assets/Scenes/playScenes.unity`(0)、`Assets/Scenes/workroom.unity`(1)
+- 构建场景：`Assets/Scenes/playScenes.unity`(0)、`Assets/Scenes/workroom.unity`(1)、`Assets/Scenes/outground.unity`(2)、`Assets/Scenes/attic.unity`(3)
 - 自定义层 `inroom`；排序层 `Default` / `inroom` / `ontable`
 - 脚本全部位于 `Assets/scripts/`，17 个 `.cs`，无 asmdef、无单元测试、无第三方运行时依赖
 - 包依赖只用到 `com.unity.feature.2d`、`textmeshpro`、`ugui`、`timeline`、`ide.*` 等官方包
@@ -109,6 +109,7 @@
 | `chair` | ClickToPlayAnimation, InteractExclamationTip |
 | `wood-1` | Sign |
 | `Trigger_nextroom` | ClickPortalEnter |
+| `Trigger_attic` | ClickPortalEnter（Click 触发 + 需 Q 确认，目标 `attic`，玩家落点 `(-6.2, -3.3)`） |
 | `SaveGameMenu` | SaveGameMenu |
 | `playerManager` | PlayerManager |
 | 其余 | Canvas/EventSystem/Grid/Tilemap/Button/RawImage/TMP 文本等内置组件 |
@@ -121,6 +122,15 @@
 | `chair_two` | ClickToPlayAnimation, InteractExclamationTip |
 | `Trigger_nextroom` | ClickPortalEnter |
 | 其余 | Grid/Tilemap/Main Camera 等 |
+
+`Assets/Scenes/attic.unity`
+
+| 物体 | 挂载脚本 / 内容 |
+|---|---|
+| `Grid` → `Tilemap` | 整张阁楼地图当作一个 Tile 铺底（`Assets/Scenes/TileMaps/attic.asset` → `attic.png`，385×190、PPU 100、Point 过滤；Tilemap 缩放 5.3，地图中心在世界原点，相机正对） |
+| `Walls` | 4 个实体 BoxCollider2D，围出走行区域 x∈[-9.4, 9.4]、y∈[-4.5, -1.5] |
+| `Trigger_back` | ClickPortalEnter（Auto：走到左下角活板门上自动回 `playScenes`，落点 `(0.24, -1.8)`） |
+| `Main Camera` | ortho 6，位置 `(0, 0, -10)` |
 
 `Assets/Prefabs/`
 

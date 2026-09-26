@@ -3488,7 +3488,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetSceneName: attic
-  playerSpawnPos: {x: 0, y: 0}
+  playerSpawnPos: {x: -6.2, y: -3.3}
   triggerMode: 1
   requireConfirm: 1
   confirmText: 
