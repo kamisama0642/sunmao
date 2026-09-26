@@ -3488,10 +3488,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetSceneName: attic
-  playerSpawnPos: {x: -6.2, y: -3.3}
+  playerSpawnPos: {x: -6.2, y: -3.6}
   triggerMode: 1
   requireConfirm: 1
-  confirmText: 
+  confirmText: \u8981\u722C\u4E0A\u9601\u697C\u5417\uFF1F\uFF08Q \u786E\u8BA4 / E \u53D6\u6D88\uFF09
   requiredItems: []
 --- !u!61 &1292577758
 BoxCollider2D:
@@ -3525,7 +3525,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.24044585, y: 4.581441}
+  m_Offset: {x: 0, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -3536,7 +3536,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 2.5793457, y: 3.9981728}
+  m_Size: {x: 1.45, y: 2.1}
   m_EdgeRadius: 0
 --- !u!4 &1292577759
 Transform:
@@ -3547,7 +3547,7 @@ Transform:
   m_GameObject: {fileID: 1292577756}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -4, z: 0}
+  m_LocalPosition: {x: 0.13, y: 2.08, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
