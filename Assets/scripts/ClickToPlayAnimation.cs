@@ -37,6 +37,9 @@ public class ClickToPlayAnimation : MonoBehaviour
     public string firstClickTip = "要把这堆木料加工完成吗？(Q确认/E取消)";
     public string secondClickTip = "再次观看组装动画？(Q确认/E取消)";
 
+    [Header("组装完成后的对话文案（{0} 会替换为物品名称）")]
+    public string obtainedDialogText = "原来是这样！我已知晓{0}";
+
     // 全局UI缓存
     private GameObject dialogBox;
     private TMP_Text dialogTipText;
@@ -46,6 +49,8 @@ public class ClickToPlayAnimation : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private bool _isAssembled = false;
     private bool _requirementsMet = true;
+    private bool _isObtainedTipShowing = false;
+    private ItemData _pendingUnlockNotify;
     private bool _isDialogShowing = false;
     private int _currentPlayCount = 0;
     private RenderTexture _renderTexture;
@@ -119,7 +124,7 @@ public class ClickToPlayAnimation : MonoBehaviour
         {
             if (Input.GetKeyDown(GameKeys.DialogConfirm))
             {
-                bool canPlay = _requirementsMet;
+                bool canPlay = _requirementsMet && !_isObtainedTipShowing;
                 CloseDialog();
                 if (canPlay)
                     PlayVideoAnim();
@@ -201,6 +206,39 @@ public class ClickToPlayAnimation : MonoBehaviour
         if (dialogBox == null) return;
         _isDialogShowing = false;
         dialogBox.SetActive(false);
+
+        // "已知晓"提示关闭后，才通知解锁流程
+        if (_isObtainedTipShowing)
+        {
+            _isObtainedTipShowing = false;
+            ItemData pending = _pendingUnlockNotify;
+            _pendingUnlockNotify = null;
+            if (pending != null && ItemUnlockFlow.Instance != null)
+                ItemUnlockFlow.Instance.NotifyItemObtained(pending);
+        }
+    }
+
+    /// <summary>
+    /// 组装完成后的"已知晓"提示对话，Q/E 关闭，关闭后才通知解锁流程
+    /// </summary>
+    void ShowObtainedTip(ItemData item)
+    {
+        if (dialogBox == null || dialogTipText == null)
+        {
+            // 弹窗UI缺失时直接通知解锁流程，避免流程中断
+            if (ItemUnlockFlow.Instance != null)
+                ItemUnlockFlow.Instance.NotifyItemObtained(item);
+            return;
+        }
+
+        _pendingUnlockNotify = item;
+        _isObtainedTipShowing = true;
+        _isDialogShowing = true;
+        dialogBox.SetActive(true);
+        Canvas.ForceUpdateCanvases();
+
+        string itemName = item != null ? item.itemTitle : "";
+        dialogTipText.text = string.Format(obtainedDialogText, itemName);
     }
 
     /// <summary>
@@ -301,9 +339,8 @@ public class ClickToPlayAnimation : MonoBehaviour
                 }
             }
 
-            // 通知新物品解锁流程
-            if (ItemUnlockFlow.Instance != null)
-                ItemUnlockFlow.Instance.NotifyItemObtained(itemData);
+            // 先弹"已知晓"提示，关闭后再通知解锁流程（避免两个对话叠加）
+            ShowObtainedTip(itemData);
 
             // 更新零件外观为组装完成样式
             _isAssembled = true;

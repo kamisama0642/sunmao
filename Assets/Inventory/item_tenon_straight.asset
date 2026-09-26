@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9446f177c76be25498ec9c9491bdd4e4, type: 3}
   m_Name: "\u76F4\u69AB\u51FA\u5934"
   m_EditorClassIdentifier: 
-  itemTitle: "\u76F4\u69AB\u51FA\u5934"
+  itemTitle: "\u76F4\u69AB"
   itemDescription: "\u76F4\u69AB\u5E73\u80A9\u6216\u9F50\u80A9\uFF0C\u69AB\u5934\u6216\u51FA\u6216\u95F7\uFF0C\u662F\u6240\u6709\u6728\u6750\u6784\u67B6\u7684\u6700\u57FA\u672C\u69AB\u536F\u8FDE\u63A5\u65B9\u5F0F\u3002"
   itemSprite: {fileID: 21300000, guid: 2efff8d874502f846bffd7d7cdf2ed8b, type: 3}
   itemVideo: {fileID: 32900000, guid: 80e7a61a6980e2349820b52a92ff0e19, type: 3}
