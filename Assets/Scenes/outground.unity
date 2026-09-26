@@ -837,7 +837,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapMin: {x: -21.29, y: -10.65}
   mapMax: {x: 21.29, y: 10.65}
-  smoothTime: 0.12
+  smoothTime: 0.18
+  pixelSnap: 1
 --- !u!61 &960000031
 BoxCollider2D:
   m_ObjectHideFlags: 0

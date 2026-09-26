@@ -2,8 +2,9 @@
 
 /// <summary>
 /// 室外场景的镜头跟随
-/// 跟随跨场景保留的玩家（PlayerManager.OnlyPlayer），并把镜头夹在地图边界内，避免拍出地图外
+/// 跟随跨场景保留的玩家（PlayerManager.OnlyPlayer），把镜头夹在地图边界内，避免拍出地图外
 /// 挂载点：室外场景的 Main Camera（地图比一屏大时才需要）
+/// 平滑用的是内部未对齐的位置，最后输出时才做像素对齐 —— 这样既顺滑又不会让像素画随镜头抖
 /// </summary>
 public class CameraFollow : MonoBehaviour
 {
@@ -11,16 +12,21 @@ public class CameraFollow : MonoBehaviour
     public Vector2 mapMin = new Vector2(-21.29f, -10.65f);
     public Vector2 mapMax = new Vector2(21.29f, 10.65f);
 
-    [Header("跟随平滑（0 = 硬跟）")]
-    public float smoothTime = 0.12f;
+    [Header("跟随平滑（秒，越大越柔；0 = 硬跟）")]
+    public float smoothTime = 0.18f;
+
+    [Header("像素对齐（镜头落在屏幕像素网格上，像素画才不会随镜头抖）")]
+    public bool pixelSnap = true;
 
     private Camera cam;
+    private Vector3 smoothed;      // 内部真实跟随位置（未对齐）
     private Vector3 velocity;
     private bool snapped;
 
     void Start()
     {
         cam = GetComponent<Camera>();
+        smoothed = transform.position;
     }
 
     void LateUpdate()
@@ -49,10 +55,24 @@ public class CameraFollow : MonoBehaviour
         {
             snapped = true;
             velocity = Vector3.zero;
-            transform.position = target;
-            return;
+            smoothed = target;
+        }
+        else
+        {
+            smoothed = Vector3.SmoothDamp(smoothed, target, ref velocity, smoothTime);
         }
 
-        transform.position = Vector3.SmoothDamp(transform.position, target, ref velocity, smoothTime);
+        Vector3 pos = smoothed;
+        pos.z = transform.position.z;
+
+        // 像素对齐：1 屏幕像素 = 正交高度 / 屏幕像素高
+        if (pixelSnap && cam != null && cam.orthographic && Screen.height > 0)
+        {
+            float unitPerPixel = cam.orthographicSize * 2f / Screen.height;
+            pos.x = Mathf.Round(pos.x / unitPerPixel) * unitPerPixel;
+            pos.y = Mathf.Round(pos.y / unitPerPixel) * unitPerPixel;
+        }
+
+        transform.position = pos;
     }
 }
