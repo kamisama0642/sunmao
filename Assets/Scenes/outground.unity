@@ -209,8 +209,8 @@ Transform:
   m_GameObject: {fileID: 63743647}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.13, y: -4.6, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: -0.26, y: -9.2, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -226,6 +226,7 @@ GameObject:
   - component: {fileID: 909879896}
   - component: {fileID: 909879895}
   - component: {fileID: 909879894}
+  - component: {fileID: 960000041}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -380,8 +381,8 @@ Transform:
   m_GameObject: {fileID: 960000011}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 1, y: 1, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 960000002}
@@ -539,7 +540,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 960000002}
@@ -814,6 +815,21 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 3.2353, y: 2.6471}
   m_EdgeRadius: 0
+--- !u!114 &960000041
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 909879893}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1c7216b172009523b3289c198c0bffe0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mapMin: {x: -21.29, y: -10.65}
+  mapMax: {x: 21.29, y: 10.65}
+  smoothTime: 0.12
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
