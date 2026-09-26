@@ -6224,7 +6224,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   targetSceneName: outground
-  playerSpawnPos: {x: -0.26, y: -6.38}
+  playerSpawnPos: {x: 0.15, y: -3.4}
   triggerMode: 0
   requireConfirm: 0
   confirmText: 
