@@ -48,6 +48,7 @@ public class OpeningScene : MonoBehaviour
     void Start()
     {
         _stage = Stage.Envelope;
+        if (letter != null) letter.SetActive(false);
         if (letterText != null) letterText.SetActive(false);
         if (fullScreenClick != null) fullScreenClick.SetActive(false);
         SetHint(envelopeHint);
@@ -82,10 +83,9 @@ public class OpeningScene : MonoBehaviour
             if (btn != null) btn.interactable = false;
         }
 
-        PlayTrigger(envelopeAnimator, envelopeOpenTrigger);
-
-        if (_moveRoutine != null) StopCoroutine(_moveRoutine);
-        _moveRoutine = StartCoroutine(MoveEnvelope());
+        // 打开信封：信封收起，信纸展开
+        if (envelope != null) envelope.SetActive(false);
+        if (letter != null) letter.SetActive(true);
 
         SetHint(letterHint);
     }
