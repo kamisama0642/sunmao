@@ -19,6 +19,8 @@ public class InteractExclamationTip : MonoBehaviour
     public float floatSpeed = 2f;
     [Header("感叹号上下浮动幅度")]
     public float floatRange = 0.25f;
+    [Header("玩家进入这个距离内才显示感叹号（世界单位）")]
+    public float showDistance = 3f;
 
     /// <summary>
     /// 运行时实例化生成的感叹号物体
@@ -37,6 +39,16 @@ public class InteractExclamationTip : MonoBehaviour
 
     private void Update()
     {
+        // 距离检测：只有玩家靠近时才显示感叹号
+        if (_runtimeTip != null)
+        {
+            GameObject player = PlayerManager.OnlyPlayer;
+            bool near = player != null &&
+                Vector2.Distance(player.transform.position, transform.position) <= showDistance;
+            if (_runtimeTip.activeSelf != near)
+                _runtimeTip.SetActive(near);
+        }
+
         // 浮动动画
         if (_runtimeTip != null && _runtimeTip.activeSelf)
         {
