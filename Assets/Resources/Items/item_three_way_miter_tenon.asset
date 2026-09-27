@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemTitle: "\u7CBD\u89D2\u69AB"
   itemDescription: "\u7CBD\u89D2\u69AB\u7528\u4E8E\u4E09\u6839\u65B9\u6750\u4EE5\u76F4\u89D2\u4EA4\u6C47\u7684\u8F6C\u89D2\uFF0C\u4E09\u9762\u51FA\u69AB\u76F8\u4E92\u54AC\u5408\uFF0C\u5916\u5F62\u4F3C\u7CBD\u89D2\uFF0C\u591A\u7528\u4E8E\u684C\u6848\u3001\u67DC\u4F53\u7684\u89D2\u90E8\u8FDE\u63A5\u3002"
-  itemSprite: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: 5f8db1920751c46a7409b6d6c613a5d4, type: 3}
   itemVideo: {fileID: 32900000, guid: 91108fc37b27d1c4192d7c66b9a0a649, type: 3}
   autoPlay: 1
   partKey: three_way_miter_tenon

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemTitle: "\u5939\u5934\u69AB"
   itemDescription: "\u5939\u5934\u69AB\u662F\u7259\u6761\u4E0E\u7259\u5934\u5939\u4F4F\u817F\u8DB3\u7684\u69AB\u536F\u505A\u6CD5\uFF0C\u69AB\u5934\u4ECE\u817F\u8DB3\u4FA7\u9762\u63D2\u5165\uFF0C\u7ED3\u6784\u7A33\u56FA\u4E14\u5916\u89C2\u7B80\u6D01\uFF0C\u5E38\u89C1\u4E8E\u684C\u6848\u7684\u8FB9\u6846\u4E0E\u817F\u8DB3\u8FDE\u63A5\u3002"
-  itemSprite: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: 9c7ac3aa927dbebe847275f4bdf42494, type: 3}
   itemVideo: {fileID: 32900000, guid: 73d29c71975910142bae2c57b43641f7, type: 3}
   autoPlay: 1
   partKey: clamp_head_tenon

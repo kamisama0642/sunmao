@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemTitle: "\u6954\u9489\u69AB"
   itemDescription: "\u4E24\u7247\u534A\u69AB\u5BF9\u63D2\u540E\u4EE5\u6728\u6954\u8D2F\u9489\u9501\u5B9A\uFF0C\u63A5\u5408\u7D27\u5BC6\u4E0D\u6613\u8131\u51FA\uFF0C\u5E38\u7528\u4E8E\u5706\u6750\u63A5\u957F\u4E0E\u5F27\u5F62\u6784\u4EF6\u3002"
-  itemSprite: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: 71783142218536d2232ac65a41267f27, type: 3}
   itemVideo: {fileID: 32900000, guid: d5008e5fb69ece745b983a7b2d3420bf, type: 3}
   autoPlay: 1
   partKey: wedge_tenon

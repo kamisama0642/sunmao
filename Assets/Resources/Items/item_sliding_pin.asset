@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemTitle: "\u8D70\u9A6C\u9500"
   itemDescription: "\u53EF\u62C6\u5378\u7684\u6D3B\u52A8\u69AB\u536F\uFF0C\u69AB\u5934\u63A8\u5165\u540E\u81EA\u9501\uFF0C\u53CD\u5411\u9000\u51FA\u5373\u53EF\u62C6\u4E0B\uFF0C\u591A\u7528\u4E8E\u9700\u8981\u62C6\u88C5\u7684\u684C\u6848\u4E0E\u67B6\u5B50\u3002"
-  itemSprite: {fileID: 0}
+  itemSprite: {fileID: 21300000, guid: 129934bfd7d63da6af74b4353bcae0cc, type: 3}
   itemVideo: {fileID: 32900000, guid: 482a043ef4428354b9551429f46796b0, type: 3}
   autoPlay: 1
   partKey: sliding_pin
