@@ -1984,6 +1984,7 @@ GameObject:
   m_Component:
   - component: {fileID: 960002002}
   - component: {fileID: 960002003}
+  - component: {fileID: 960002004}
   m_Layer: 0
   m_Name: PavilionFront
   m_TagString: Untagged
@@ -2058,6 +2059,21 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &960002004
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 960002001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d81f47ac9e25b6d4f0a712c8e6b5943, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  pivotY: -6.5882
+  orderWhenPlayerFront: 0
+  orderWhenPlayerBehind: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
