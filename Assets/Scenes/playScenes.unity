@@ -2444,9 +2444,9 @@ RectTransform:
   - {fileID: 1497539536}
   m_Father: {fileID: 184368162}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -330}
+  m_AnchorMin: {x: 0.5, y: 0.32}
+  m_AnchorMax: {x: 0.5, y: 0.32}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 1200, y: 900}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &589432217
@@ -5159,6 +5159,7 @@ GameObject:
   - component: {fileID: 1433204207}
   - component: {fileID: 1433204209}
   - component: {fileID: 1433204208}
+  - component: {fileID: 900000001}
   m_Layer: 0
   m_Name: MenuStyle
   m_TagString: Untagged
@@ -5180,10 +5181,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 184368162}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0.2, y: 0.15}
+  m_AnchorMax: {x: 0.8, y: 0.85}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 1015, y: 1728}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1433204208
 MonoBehaviour:
@@ -7260,6 +7261,16 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 6807562574623051282, guid: 7f114e3d305797743986ddd03ae00007, type: 3}
   m_PrefabInstance: {fileID: 4309573022436614394}
   m_PrefabAsset: {fileID: 0}
+--- !u!865 &900000001
+AspectRatioFitter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1433204206}
+  m_Enabled: 1
+  m_AspectMode: 1
+  m_AspectRatio: 0.5872
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
